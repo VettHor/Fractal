@@ -34,15 +34,15 @@ export const KochCurve = ({basicFigure, internalFigure, isReverse, numerator, de
     }, [internalFigure, isReverse, numerator, denumerator])
     
     const koch = (a, b, limit) => {
-        if(internalFigure === 'triangle') {
-            let [dx, dy] = [b.x - a.x, b.y - a.y]
-            let dist = Math.sqrt(dx * dx + dy * dy)
-            let h = 0;
-            if(numerator === '' || denumerator === '')
-                h = Math.sqrt(3) * dist / 6;
-            else 
-                h = dist * Number(numerator) / Number(denumerator);
+        let [dx, dy] = [b.x - a.x, b.y - a.y]
+        let dist = Math.sqrt(dx * dx + dy * dy)
+        let h = 0;
+        if(numerator === '' || denumerator === '')
+            h = Math.sqrt(3) * dist / 6;
+        else 
+            h = dist * Number(numerator) / Number(denumerator);
 
+        if(internalFigure === 'triangle') {
             let p1 = {
                 x: a.x + dx / 3,
                 y: a.y + dy / 3
@@ -78,15 +78,6 @@ export const KochCurve = ({basicFigure, internalFigure, isReverse, numerator, de
             }
 
         } else {
-            let [dx, dy] = [b.x - a.x, b.y - a.y]
-            let dist = Math.sqrt(dx * dx + dy * dy)
-            let h = 0;
-            if(numerator === '' || denumerator === '')
-                h = Math.sqrt(3) * dist / 6;
-            else 
-                h = dist * Number(numerator) / Number(denumerator);
-
-            
             let p1 = {
                 x: a.x + dx / 3,
                 y: a.y + dy / 3
@@ -95,7 +86,6 @@ export const KochCurve = ({basicFigure, internalFigure, isReverse, numerator, de
                 x: b.x - dx / 3,
                 y: b.y - dy / 3
             }
-            //let h = Math.sqrt(3) * Math.sqrt(Math.pow(p1.x - midPoint.x, 2) + Math.pow(p1.y - midPoint.y,2))
             let [dxP, dyP] = [b.y - a.y, a.x - b.x];
             let p2 = {
                 x: p1.x + dxP * h / dist * (isReverse ? (-1) : 1),
