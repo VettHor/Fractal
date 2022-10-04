@@ -2,15 +2,15 @@ import { useState, useEffect, useRef } from 'react'
 
 export const KochCurve = ({basicFigure, internalFigure, isReverse, numerator, denumerator}) => {
     const defaultPointsTriangle = {
-        p1: { x: 0, y: -150 },
+        p1: { x: 0, y: -159.8076211353316 },
         p2: { x: 150, y: 100 },
         p3: { x: -150, y: 100 }
     };
     const defaultPointsSquare = {
         p1: { x: -150, y: -150 },
         p2: { x: 150, y: -150 },
-        p3: { x: 150, y: 100 },
-        p4: { x: -150, y: 100 }
+        p3: { x: 150, y: 150 },
+        p4: { x: -150, y: 150 }
     };
     const canvas = useRef(null)
     const [currIteration, setCurrIteration] = useState(-1);
