@@ -53,13 +53,34 @@ export const ColorTest = () => {
 
     const mouseMove = (event) => {
         let table1 = document.getElementById('circled-table-1');
+
         table1.style.left = event.clientX + 'px';
         table1.style.top = event.clientY + 'px';
 
+        // const context = canvas1.current.getContext('2d');
+        // context.fillStyle = '#0F0FF0';
+        // context.fillRect(5, 5, 1, 1);
+
         var rect = canvas1.current.getBoundingClientRect();
-        console.log(event.clientX - rect.left, event.clientY - rect.top);
-        let {r, g, b} = getCanvasPixelColor(canvas1.current, 2, 1);
-        console.log(r, g, b);
+        let x = parseInt(((event.clientX - rect.left) / (rect.right - rect.left)) * canvas1.current.width);
+        let y = parseInt(((event.clientY - rect.top) / (rect.bottom - rect.top)) * canvas1.current.height);
+        for(var i = -5; i < 6; ++i)
+        {
+            for(var j = -5; j < 6; ++j)
+            {
+                let [ r, g, b ] = [ 8, 12, 60 ];
+                if (x + i >= 0 && y + j >= 0) {
+                    [ r, g, b ] = getCanvasPixelColor(canvas1.current, x + i, y + j);
+                }
+                document.getElementById(`row-${j + 5}-col-${i + 5}`).style.backgroundColor = `rgb(${r}, ${g}, ${b})`;
+            }
+        }
+    }
+
+    const isCanvasBlank = (canvas) => {
+        return !canvas.getContext('2d')
+          .getImageData(0, 0, canvas.width, canvas.height).data
+          .some(channel => channel !== 0);
     }
 
     return(
