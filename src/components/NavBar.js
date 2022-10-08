@@ -3,7 +3,7 @@ import { Nav, Navbar, Container} from "react-bootstrap";
 import { Link, Route, Routes, BrowserRouter } from "react-router-dom";
 import { Home } from "./Home";
 import { Fractal } from "./Fractal";
-import { Color } from "./Color";
+import { ColorTest } from "./ColorTest";
 import { Transformation } from "./Transformation";
 import logo from '../assets/img/logo.png';
 
@@ -55,7 +55,7 @@ export const NavBar = () => {
                 <Routes>
                     <Route path="/" element={<Home changeLink={link => setActiveLink(link)}/>}/>
                     <Route path="/fractal" element={<Fractal/>}/>
-                    <Route path="/color" element={<Color/>}/>
+                    <Route path="/color" element={<ColorTest/>}/>
                     <Route path="/transformation" element={<Transformation/>}/>
                 </Routes>
             </div>

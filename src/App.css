@@ -298,7 +298,7 @@ nav.navbar {
   margin-top: 7px;
 }
 
-.fractal button {
+.fractal button, .color button {
   color: #fff;
   font-weight: 700;
   font-size: 20px;
@@ -319,7 +319,7 @@ nav.navbar {
   margin-top: 8px;
 }
 
-.fractal button span {
+.fractal button span, .color button span {
   font-size: 30px;
 }
 
@@ -793,3 +793,113 @@ input[type="checkbox"]:focus + label {
 		tranform: scale(1);
 	}
 }
+
+
+
+/**Color.css**/
+.color { 
+  margin-top: 0;
+  padding: 85px 90px 100px 90px;
+}
+
+.bordered-block {
+  height: 165px;
+  width: 700px;
+  margin-left: 20px;
+}
+
+.bordered-block h1 {
+  font-size: 35px !important;
+}
+
+.color-display {
+  margin-top: 5px;
+  max-width: auto;
+  height: 45px;
+  background-color: #CB2E81;
+  margin-left: 26px;
+  margin-right: 26px;
+}
+
+.color-slider {
+  margin-left: 24px;
+  margin-right: 24px;
+  margin-top: 0px;
+}
+
+#color-slider-value {
+  margin-left: -1375px;
+  color: #CB2E81;
+  margin-top: -14px;
+}
+
+.image-container {
+  background-color: #fff;
+  height: 364px;
+  width: 700px;
+}
+
+.color .question-div {
+  right: 0px;
+}
+
+.color .image-div {
+  right: 0px;
+}
+
+.color-left-side {
+  margin-top: 70px !important;
+}
+
+.bordered-block-saturation {
+  width: auto;
+  height: 137px;
+  margin-right: 20px;
+  margin-top: -15px;
+}
+
+.bordered-block h1 {
+  font-size: 30px;
+}
+
+.inside-canvas-pointer {
+  cursor: crosshair;
+}
+
+.pixel-color {
+  border: 1.3px solid #000000;
+  background-color: red;
+  width: 20px;
+  height: 20px;
+}
+
+.pixel-color-center {
+  border: 1.7px solid white;
+}
+
+.pixel-color-center-left {
+  border-right: 1.7px solid white;
+}
+
+.pixel-color-center-top {
+  border-bottom: 1.7px solid white;
+}
+
+.circled-table {
+  z-index: 100;
+  overflow: hidden;
+  box-sizing: unset;
+  border-radius: 50%;
+  border: 2.5px solid #000000;
+  position: absolute;
+  display: none;
+}
+
+.pixel-coordinates {
+  position: absolute;
+  color: red;
+}
+
+/* .color input[type=range]::-webkit-slider-thumb:active > #color-slider-value {
+  margin-top: 200px !important;
+} */
