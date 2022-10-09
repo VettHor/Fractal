@@ -816,7 +816,7 @@ input[type="checkbox"]:focus + label {
   margin-top: 5px;
   max-width: auto;
   height: 45px;
-  background-color: #CB2E81;
+  background-color: #fff;
   margin-left: 26px;
   margin-right: 26px;
 }
@@ -837,6 +837,7 @@ input[type="checkbox"]:focus + label {
   background-color: #fff;
   height: 364px;
   width: 700px;
+  cursor: crosshair;
 }
 
 .color .question-div {
@@ -862,26 +863,22 @@ input[type="checkbox"]:focus + label {
   font-size: 30px;
 }
 
-.inside-canvas-pointer {
-  cursor: crosshair;
-}
-
 .pixel-color {
   border: 1.5px solid #000000;
-  width: 20px;
-  height: 20px;
+  width: 20px !important;
+  height: 20px !important;
 }
 
 .pixel-color-center {
-  border: 2.5px solid #FF0000;
+  border: 3px solid #FF0000;
 }
 
 .pixel-color-center-left {
-  border-right: 2.5px solid #FF0000;
+  border-right: 3px solid #FF0000;
 }
 
 .pixel-color-center-top {
-  border-bottom: 2.5px solid #FF0000;
+  border-bottom: 3px solid #FF0000;
 }
 
 .circled-table {
@@ -900,9 +897,9 @@ input[type="checkbox"]:focus + label {
   background-color: #fff;
   border: 2.5px solid #000;
   border-radius: 20px;
-  margin-left: 10px;
+  margin-left: 5px;
   margin-top: 130px;
-  width: 210px;
+  width: 220px;
   height: 42px;
   display: none;
 }
@@ -910,6 +907,7 @@ input[type="checkbox"]:focus + label {
 .pixel-coordinates {
   color: #FF0000;
   font-size: 30px;
+  font-weight: 700;
 }
 
 /* .color input[type=range]::-webkit-slider-thumb:active > #color-slider-value {

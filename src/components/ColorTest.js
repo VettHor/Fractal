@@ -1,5 +1,5 @@
 import { Container, Row, Col } from 'react-bootstrap';
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Popout } from './Popout'
 import getCanvasPixelColor from 'get-canvas-pixel-color';
 import questionRobot from '../assets/img/question_robot.png';
@@ -7,11 +7,21 @@ import questionRobotActive from '../assets/img/question_robot_active.png';
 
 export const ColorTest = () => {
     const canvas1 = useRef(null);
+    const canvas2 = useRef(null);
     const [isActivePopout, setActivePopout] = useState(false);
     const [openPopout, setOpenPopout] = useState(false);
     const [colorSliderValue, setColorSliderValue] = useState(0);
     const [drag, setDrag] = useState(true);
-    const [isInsideCanvas, setIsInsideCanvas] = useState('inside-canvas-pointer');
+
+    useEffect(() => {
+        let context1 = canvas1.current.getContext("2d");
+        context1.fillStyle = "white";
+        context1.fillRect(0, 0, canvas1.current.width, canvas1.current.height);
+
+        let context2 = canvas2.current.getContext("2d");
+        context2.fillStyle = "white";
+        context2.fillRect(0, 0, canvas2.current.width, canvas2.current.height);
+    }, []);
 
     const setPopoutState = (state) => {
         setActivePopout(state)
@@ -28,13 +38,14 @@ export const ColorTest = () => {
         setDrag(false);
     }
 
-    const onDropHandler = (e) => {
+    const onDropHandler = (currCanvas, e) => {
         e.preventDefault();
+        let canvas = currCanvas === 'canvas-1' ? canvas1.current : canvas2.current;
         setDrag(false);
         let files = [...e.dataTransfer.files];
 
-        const context = canvas1.current.getContext('2d');
-        var img = new Image();
+        let context = canvas.getContext('2d');
+        let img = new Image();
 
         img.src = URL.createObjectURL(files[0]);
         img.onload = function() {
@@ -44,36 +55,37 @@ export const ColorTest = () => {
     }
 
     const mouseOver = () => {
-        document.getElementById('circled-table-1').style.display = 'block';
+        document.getElementById('circled-table').style.display = 'block';
         document.getElementById('pixel-coordinates-panel').style.display = 'block';
     }
 
     const mouseOut = () => {
-        document.getElementById('circled-table-1').style.display = 'none';
+        document.getElementById('circled-table').style.display = 'none';
         document.getElementById('pixel-coordinates-panel').style.display = 'none';
     }
 
-    const mouseMove = (event) => {
-        let table1 = document.getElementById('circled-table-1');
-        table1.style.left = event.clientX + 'px';
-        table1.style.top = event.clientY + 'px';
+    const mouseMove = (currCanvas, event) => {
+        let canvas = currCanvas === 'canvas-1' ? canvas1.current : canvas2.current;
+        let table = document.getElementById('circled-table');
+        table.style.left = event.clientX + 'px';
+        table.style.top = event.clientY + 'px';
         document.getElementById('pixel-coordinates-panel').style.left = event.clientX + 'px';
         document.getElementById('pixel-coordinates-panel').style.top = event.clientY + 100 + 'px';
-        let rect = canvas1.current.getBoundingClientRect();
-        let x = parseInt(((event.clientX - rect.left) / (rect.right - rect.left)) * canvas1.current.width);
-        let y = parseInt(((event.clientY - rect.top) / (rect.bottom - rect.top)) * canvas1.current.height);
-        let isBlank = isCanvasBlank(canvas1.current);
+        let rect = canvas.getBoundingClientRect();
+        let x = parseInt(((event.clientX - rect.left) / (rect.right - rect.left)) * canvas.width);
+        let y = parseInt(((event.clientY - rect.top) / (rect.bottom - rect.top)) * canvas.height);
+        let isBlank = isCanvasBlank(canvas);
         let [ r, g, b ] = [];
         for(var i = -5; i < 6; ++i)
         {
             for(var j = -5; j < 6; ++j)
             {
-                if (x + i < 0 || y + j < 0 || x + i >= canvas1.current.width || y + j >= canvas1.current.height)
+                if (x + i < 0 || y + j < 0 || x + i >= canvas.width || y + j >= canvas.height)
                     [ r, g, b ] = [ 8, 12, 60 ];
                 else if(isBlank) 
                     [ r, g, b ] = [ 255, 255, 255 ];
                 else 
-                    [ r, g, b ] = getCanvasPixelColor(canvas1.current, x + i, y + j);
+                    [ r, g, b ] = getCanvasPixelColor(canvas, x + i, y + j);
                 document.getElementById(`row-${j + 5}-col-${i + 5}`).style.backgroundColor = `rgb(${r}, ${g}, ${b})`;
             }
         }
@@ -86,20 +98,111 @@ export const ColorTest = () => {
           .some(channel => channel !== 0);
     }
 
-    const getPixel = (event) => {
+    const getPixel = (currCanvas, event) => {
+        let canvas = currCanvas === 'canvas-1' ? canvas1.current : canvas2.current;
         let [ r, g, b ] = [];
-        if(isCanvasBlank(canvas1.current)) 
+        if(isCanvasBlank(canvas)) 
             [ r, g, b ] = [ 255, 255, 255 ];
         else {
-            let rect = canvas1.current.getBoundingClientRect();
-            let x = parseInt(((event.clientX - rect.left) / (rect.right - rect.left)) * canvas1.current.width);
-            let y = parseInt(((event.clientY - rect.top) / (rect.bottom - rect.top)) * canvas1.current.height);
-            [ r, g, b ] = getCanvasPixelColor(canvas1.current, x, y);
+            let rect = canvas.getBoundingClientRect();
+            let x = parseInt(((event.clientX - rect.left) / (rect.right - rect.left)) * canvas.width);
+            let y = parseInt(((event.clientY - rect.top) / (rect.bottom - rect.top)) * canvas.height);
+            [ r, g, b ] = getCanvasPixelColor(canvas, x, y);
         }
-        document.getElementById('first-color-display-R').innerHTML = r;
-        document.getElementById('first-color-display-G').innerHTML = g;
-        document.getElementById('first-color-display-B').innerHTML = b;
-        document.getElementById('first-dispay-color-block').style.backgroundColor = `rgb(${r}, ${g}, ${b})`;
+
+        if(currCanvas === 'canvas-1') {
+            document.getElementById('color-display-R').innerHTML = r;
+            document.getElementById('color-display-G').innerHTML = g;
+            document.getElementById('color-display-B').innerHTML = b;
+            document.getElementById('first-dispay-color-block').style.backgroundColor = `rgb(${r}, ${g}, ${b})`;
+        } else {
+            let [h, s, v] = RGBToHSV([r, g, b]);
+            document.getElementById('color-display-H').innerHTML = `${h % 1 === 0 ? h : h.toFixed(2)}°`;
+            document.getElementById('color-display-S').innerHTML = `${s % 1 === 0 ? s : s.toFixed(2)}%`;
+            document.getElementById('color-display-V').innerHTML = `${v % 1 === 0 ? v : v.toFixed(2)}%`;
+            document.getElementById('second-dispay-color-block').style.backgroundColor = `rgb(${r}, ${g}, ${b})`;
+        }
+    }
+
+    const RGBToHSV = ([r, g, b]) => {
+        [r, g, b] = [r/255, g/255, b/255];
+        let cmax = Math.max(Math.max(r, g), b);
+        let cmin = Math.min(Math.min(r, g), b);
+        let [h, s, v] = [0, 0, 0];
+
+        if(cmax === cmin ) {
+            h = 0;
+        }
+        else if(cmax === r && g >= b) {
+            h = 60 * (g - b) / (cmax - cmin);
+        } 
+        else if(cmax === r && g < b) {
+            h = 60 * (g - b) / (cmax - cmin) + 360;
+        }
+        else if(cmax === g) {
+            h = 60 * (b - r) / (cmax - cmin) + 120;
+        } 
+        else //if(cmax === b) 
+        {
+            h = 60 * (r - g) / (cmax - cmin) + 240;
+        }
+
+        if(cmax === 0) {
+            s = 0;
+        } else {
+            s = 1 - (cmin / cmax);
+        }
+
+        v = cmax;
+        return [h, s * 100, v * 100];
+    }
+
+    const HSVToRGB = ([h, s, v]) => {
+        [h, s, v] = [h/360, s/100, v/100];
+        var r, g, b, i, f, p, q, t;
+        i = Math.floor(h * 6);
+        f = h * 6 - i;
+        p = v * (1 - s);
+        q = v * (1 - f * s);
+        t = v * (1 - (1 - f) * s);
+        switch (i % 6) {
+            case 0: r = v; g = t; b = p; break;
+            case 1: r = q; g = v; b = p; break;
+            case 2: r = p; g = v; b = t; break;
+            case 3: r = p; g = q; b = v; break;
+            case 4: r = t; g = p; b = v; break;
+            case 5: r = v; g = p; b = q; break;
+        }
+        return [
+            Math.round(r * 255),
+            Math.round(g * 255),
+            Math.round(b * 255)
+        ];
+    }
+
+    const setSaturation = (saturation) => {
+        console.log(saturation)
+        let context2 = canvas2.current.getContext('2d');
+        let { width, height } = canvas1.current.getBoundingClientRect();
+        let [r, g, b] = [];
+        let [h, s, v] = [];
+        for(var i = 0; i < height; ++i) {
+            for(var j = 0; j < width; ++j) {
+                [r, g, b] = getCanvasPixelColor(canvas1.current, i, j);
+                [h, s, v] = RGBToHSV([r, g, b]);
+                if(h >= 50 && h <= 70) {
+                    s = saturation;
+                    [r, g, b] = HSVToRGB([h, s, v]);
+                }
+                var id = context2.createImageData(1,1); 
+                var d  = id.data; 
+                d[0] = r;                     
+                d[1] = g;
+                d[2] = b;
+                d[3] = 255;
+                context2.putImageData(id, i, j);
+            }
+        }
     }
 
     return(
@@ -116,18 +219,7 @@ export const ColorTest = () => {
                 <Container fluid className='justify-content-center text-center align-items-center'>
                     <Row> 
                         <Col xs={12} md={6} xl={6} className='color-left-side'>
-                            <canvas ref={canvas1} className={`image-container ${isInsideCanvas}`}
-                                    onDragStart={e => dragStartHandler(e)}
-                                    onDragLeave={e => dragLeaveHandler(e)}
-                                    onDragOver={e => dragStartHandler(e)}
-                                    onDrop={e => onDropHandler(e)}
-
-                                    onMouseOver={() => mouseOver()}
-                                    onMouseOut={() => mouseOut()}
-                                    onMouseMove={e => mouseMove(e)}
-                                    onClick={e => getPixel(e)}
-                                />
-                            <div className='circled-table' id='circled-table-1'>
+                            <div className='circled-table' id='circled-table'>
                                 <table id='table-1' className='d-block'>
                                     <tbody>
                                         { Array.from({length : 11}, (_, i) => {
@@ -149,24 +241,35 @@ export const ColorTest = () => {
                             <div className='pixel-coordinates-panel' id='pixel-coordinates-panel'>
                                 <h1 className='pixel-coordinates' id='pixel-coordinates'>x : y :</h1>
                             </div>
+                            <canvas ref={canvas1} className='image-container'
+                                    onDragStart={e => dragStartHandler(e)}
+                                    onDragLeave={e => dragLeaveHandler(e)}
+                                    onDragOver={e => dragStartHandler(e)}
+                                    onDrop={e => onDropHandler('canvas-1', e)}
+
+                                    onMouseOver={() => mouseOver()}
+                                    onMouseOut={() => mouseOut()}
+                                    onMouseMove={e => mouseMove('canvas-1', e)}
+                                    onClick={e => getPixel('canvas-1', e)}
+                            />
                             <div className='border border-3 bordered-block'>
                                 <Row>
                                     <Col xs={12} md={6} xl={4}>
                                         <h1>R</h1>
                                         <div className='bg-white w-75 m-auto'>
-                                            <h1 id='first-color-display-R' className='text-black'>255</h1>
+                                            <h1 id='color-display-R' className='text-black'>255</h1>
                                         </div>
                                     </Col>
                                     <Col xs={12} md={6} xl={4}>
                                         <h1>G</h1>
                                         <div className='bg-white w-75 m-auto'>
-                                            <h1 id='first-color-display-G' className='text-black'>255</h1>
+                                            <h1 id='color-display-G' className='text-black'>255</h1>
                                         </div>
                                     </Col>
                                     <Col xs={12} md={6} xl={4}>
                                         <h1>B</h1>
                                         <div className='bg-white w-75 m-auto'>
-                                            <h1 id='first-color-display-B' className='text-black'>255</h1>
+                                            <h1 id='color-display-B' className='text-black'>255</h1>
                                         </div>
                                     </Col>
                                 </Row>
@@ -184,34 +287,44 @@ export const ColorTest = () => {
                                             setPopoutState(false);
                                             document.body.style.overflow ='hidden';
                                         }}
-                                        onMouseDownCapture={() => setActivePopout(true)}>
+                                        onMouseDownCapture={() => setActivePopout(true)}> 
                                         <span>Color?</span>
                                     </button>
                                 </div>
                             </div>                  
-                            <canvas className='image-container'/>
+                            <canvas ref={canvas2} className='image-container'
+                                    onDragStart={e => dragStartHandler(e)}
+                                    onDragLeave={e => dragLeaveHandler(e)}
+                                    onDragOver={e => dragStartHandler(e)}
+                                    onDrop={e => onDropHandler('canvas-2', e)}
+
+                                    onMouseOver={() => mouseOver()}
+                                    onMouseOut={() => mouseOut()}
+                                    onMouseMove={e => mouseMove('canvas-2', e)}
+                                    onClick={e => getPixel('canvas-2',e)}
+                                />
                             <div className='border border-3 bordered-block'>
                                 <Row>
                                     <Col xs={12} md={6} xl={4}>
                                         <h1>H</h1>
                                         <div className='bg-white w-75 m-auto'>
-                                            <h1 className='text-black'>255</h1>
+                                            <h1 id='color-display-H' className='text-black'>255</h1>
                                         </div>
                                     </Col>
                                     <Col xs={12} md={6} xl={4}>
                                         <h1>S</h1>
                                         <div className='bg-white w-75 m-auto'>
-                                            <h1 className='text-black'>255</h1>
+                                            <h1 id='color-display-S' className='text-black'>255</h1>
                                         </div>
                                     </Col>
                                     <Col xs={12} md={6} xl={4}>
                                         <h1>V</h1>
                                         <div className='bg-white w-75 m-auto'>
-                                            <h1 className='text-black'>255</h1>
+                                            <h1 id='color-display-V' className='text-black'>255</h1>
                                         </div>
                                     </Col>
                                 </Row>
-                                <div className='color-display border border-3'></div>
+                                <div id='second-dispay-color-block' className='color-display border border-3'></div>
                             </div>
                         </Col>
                     </Row>
@@ -221,6 +334,7 @@ export const ColorTest = () => {
                         <p className='fs-4' id='color-slider-value'>{colorSliderValue}%</p>
                         <div className="slider-container w-auto color-slider">
                             <input id='color-slider' defaultValue='0' type="range" min="0" max="100" step='1' onInput={(event) => {
+                                setSaturation(Number(event.target.value));
                                 setColorSliderValue(event.target.value);
                                 document.getElementById('color-slider-value').style.marginLeft = Number(event.target.value) * 27.6 + -1375 + 'px';
                             }}/>
