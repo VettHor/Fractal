@@ -45,42 +45,61 @@ export const ColorTest = () => {
 
     const mouseOver = () => {
         document.getElementById('circled-table-1').style.display = 'block';
+        document.getElementById('pixel-coordinates-panel').style.display = 'block';
     }
 
     const mouseOut = () => {
         document.getElementById('circled-table-1').style.display = 'none';
+        document.getElementById('pixel-coordinates-panel').style.display = 'none';
     }
 
     const mouseMove = (event) => {
         let table1 = document.getElementById('circled-table-1');
-
         table1.style.left = event.clientX + 'px';
         table1.style.top = event.clientY + 'px';
-
-        // const context = canvas1.current.getContext('2d');
-        // context.fillStyle = '#0F0FF0';
-        // context.fillRect(5, 5, 1, 1);
-
-        var rect = canvas1.current.getBoundingClientRect();
+        document.getElementById('pixel-coordinates-panel').style.left = event.clientX + 'px';
+        document.getElementById('pixel-coordinates-panel').style.top = event.clientY + 100 + 'px';
+        let rect = canvas1.current.getBoundingClientRect();
         let x = parseInt(((event.clientX - rect.left) / (rect.right - rect.left)) * canvas1.current.width);
         let y = parseInt(((event.clientY - rect.top) / (rect.bottom - rect.top)) * canvas1.current.height);
+        let isBlank = isCanvasBlank(canvas1.current);
+        let [ r, g, b ] = [];
         for(var i = -5; i < 6; ++i)
         {
             for(var j = -5; j < 6; ++j)
             {
-                let [ r, g, b ] = [ 8, 12, 60 ];
-                if (x + i >= 0 && y + j >= 0) {
+                if (x + i < 0 || y + j < 0 || x + i >= canvas1.current.width || y + j >= canvas1.current.height)
+                    [ r, g, b ] = [ 8, 12, 60 ];
+                else if(isBlank) 
+                    [ r, g, b ] = [ 255, 255, 255 ];
+                else 
                     [ r, g, b ] = getCanvasPixelColor(canvas1.current, x + i, y + j);
-                }
                 document.getElementById(`row-${j + 5}-col-${i + 5}`).style.backgroundColor = `rgb(${r}, ${g}, ${b})`;
             }
         }
+        document.getElementById('pixel-coordinates').innerHTML = `x: ${x}⠀y: ${y}`;
     }
 
     const isCanvasBlank = (canvas) => {
         return !canvas.getContext('2d')
           .getImageData(0, 0, canvas.width, canvas.height).data
           .some(channel => channel !== 0);
+    }
+
+    const getPixel = (event) => {
+        let [ r, g, b ] = [];
+        if(isCanvasBlank(canvas1.current)) 
+            [ r, g, b ] = [ 255, 255, 255 ];
+        else {
+            let rect = canvas1.current.getBoundingClientRect();
+            let x = parseInt(((event.clientX - rect.left) / (rect.right - rect.left)) * canvas1.current.width);
+            let y = parseInt(((event.clientY - rect.top) / (rect.bottom - rect.top)) * canvas1.current.height);
+            [ r, g, b ] = getCanvasPixelColor(canvas1.current, x, y);
+        }
+        document.getElementById('first-color-display-R').innerHTML = r;
+        document.getElementById('first-color-display-G').innerHTML = g;
+        document.getElementById('first-color-display-B').innerHTML = b;
+        document.getElementById('first-dispay-color-block').style.backgroundColor = `rgb(${r}, ${g}, ${b})`;
     }
 
     return(
@@ -106,6 +125,7 @@ export const ColorTest = () => {
                                     onMouseOver={() => mouseOver()}
                                     onMouseOut={() => mouseOut()}
                                     onMouseMove={e => mouseMove(e)}
+                                    onClick={e => getPixel(e)}
                                 />
                             <div className='circled-table' id='circled-table-1'>
                                 <table id='table-1' className='d-block'>
@@ -125,30 +145,32 @@ export const ColorTest = () => {
                                         })}
                                     </tbody>
                                 </table>
-                                <h1 className='pixel-coordinates'>x : y :</h1>
+                            </div>
+                            <div className='pixel-coordinates-panel' id='pixel-coordinates-panel'>
+                                <h1 className='pixel-coordinates' id='pixel-coordinates'>x : y :</h1>
                             </div>
                             <div className='border border-3 bordered-block'>
                                 <Row>
                                     <Col xs={12} md={6} xl={4}>
                                         <h1>R</h1>
                                         <div className='bg-white w-75 m-auto'>
-                                            <h1 className='text-black'>255</h1>
+                                            <h1 id='first-color-display-R' className='text-black'>255</h1>
                                         </div>
                                     </Col>
                                     <Col xs={12} md={6} xl={4}>
                                         <h1>G</h1>
                                         <div className='bg-white w-75 m-auto'>
-                                            <h1 className='text-black'>255</h1>
+                                            <h1 id='first-color-display-G' className='text-black'>255</h1>
                                         </div>
                                     </Col>
                                     <Col xs={12} md={6} xl={4}>
                                         <h1>B</h1>
                                         <div className='bg-white w-75 m-auto'>
-                                            <h1 className='text-black'>255</h1>
+                                            <h1 id='first-color-display-B' className='text-black'>255</h1>
                                         </div>
                                     </Col>
                                 </Row>
-                                <div className='color-display border border-3'></div>
+                                <div id='first-dispay-color-block' className='color-display border border-3'></div>
                             </div>
                         </Col>
                         <Col xs={12} md={6} xl={6}>      
