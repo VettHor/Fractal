@@ -886,6 +886,10 @@ input[type="checkbox"]:focus + .reverse-input-tick {
   display: none;
 }
 
+.circled-table table {
+  width: max-content;
+}
+
 .pixel-coordinates-panel {
   z-index: 100;
   position: absolute;

@@ -11,6 +11,7 @@ export const ColorTest = () => {
     const [isActivePopout, setActivePopout] = useState(false);
     const [openPopout, setOpenPopout] = useState(false);
     const [colorSliderValue, setColorSliderValue] = useState(0);
+    const [imagePixels, setImagePixels] = useState([])
 
     useEffect(() => {
         let context1 = canvas1.current.getContext("2d");
@@ -69,6 +70,17 @@ export const ColorTest = () => {
         img.onload = function() {
             context1.drawImage(img, 0, 0);
             context2.drawImage(img, 0, 0);
+            
+            let { width, height } = canvas1.current.getBoundingClientRect();
+            let pixels = [];
+            let k = 0;
+            for(var i = 0; i < height; ++i) {
+                for(var j = 0; j < width; ++j, ++k) {
+                    let [r, g, b] = context1.getImageData(i, j, 1, 1).data;
+                    pixels.push([r, g, b]);
+                }
+            }
+            setImagePixels(pixels);
         }
     }
 
@@ -202,27 +214,19 @@ export const ColorTest = () => {
         let context1 = canvas1.current.getContext('2d');
         let context2 = canvas2.current.getContext('2d');
         let { width, height } = canvas1.current.getBoundingClientRect();
-        let [r, g, b] = [];
+        let imageData = context1.getImageData(0, 0, width, height);
+        let rgbPixels = imageData.data;
         let [h, s, v] = [];
-        for(var i = 0; i < height; ++i) {
-            for(var j = 0; j < width; ++j) {
-                [r, g, b] = context1.getImageData(i, j, 1, 1).data; //getCanvasPixelColor(canvas1.current, i, j);
-                [h, s, v] = RGBToHSV([r, g, b]);
-                if(h >= 70 && h <= 170) {
-                    s += saturation;
-                    if(s > 100) s = 100;
-                    if(s < 0) s = 0;
-                    [r, g, b] = HSVToRGB([h, s, v]);
-                }
-                var id = context2.createImageData(1,1); 
-                var d  = id.data; 
-                d[0] = r;                     
-                d[1] = g;
-                d[2] = b;
-                d[3] = 255;
-                context2.putImageData(id, i, j);
+        for(var i = 0; i < rgbPixels.length; i += 4) {
+            [h, s, v] = RGBToHSV([rgbPixels[i], rgbPixels[i + 1], rgbPixels[i + 2]]);
+            if(h >= 70 && h <= 170) {
+                s += saturation;
+                if(s > 100) s = 100;
+                if(s < 0) s = 0;
             }
+            [rgbPixels[i], rgbPixels[i + 1], rgbPixels[i + 2]] = HSVToRGB([h, s, v]);
         }
+        context2.putImageData(imageData, 0, 0);
     }
 
     return(
