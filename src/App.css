@@ -403,7 +403,6 @@ hr.solid {
   color: #CB2E81;
   background-color: #050C3F;
   border-color: #CB2E81;
-  
 }
 
 .image-div {
@@ -671,10 +670,6 @@ input[type=range]::-webkit-slider-thumb:active {
   margin-top: 22px;
 }
 
-.reverse-input-tick {
-  cursor: pointer;
-}
-
 .checkbox-panel p {
   margin-top: 22px;
 }
@@ -684,7 +679,7 @@ input[type=range]::-webkit-slider-thumb:active {
 	--tick-color: #CB2E81;
 }
 
-label {
+.reverse-input-tick {
 	display: inline-block;
 	margin: 0 calc(var(--checkbox-size) * 0.25);
 	width: var(--checkbox-size);
@@ -694,9 +689,10 @@ label {
 	-webkit-transition: 400ms 100ms ease-out;
 	-o-transition: 400ms 100ms ease-out;
 	transition: 400ms 100ms ease-out;
+  cursor: pointer;
 }
 
-label:hover {
+.reverse-input-tick:hover {
 	border-color: #CB2E81;
 }
 
@@ -740,14 +736,14 @@ input[type="checkbox"] {
 	border-radius: 50%;
 }
 
-input[type="checkbox"]:checked + label .tick {
+input[type="checkbox"]:checked + .reverse-input-tick .tick {
 	opacity: 1;
 	-webkit-transform: rotate(45deg) scale(1);
 	    -ms-transform: rotate(45deg) scale(1);
 	        transform: rotate(45deg) scale(1);
 }
 
-input[type="checkbox"]:focus + label {
+input[type="checkbox"]:focus + .reverse-input-tick {
 	-webkit-animation-name: cb-pop;
 	        animation-name: cb-pop;
 	-webkit-animation-duration: 400ms;
@@ -828,7 +824,6 @@ input[type="checkbox"]:focus + label {
 }
 
 #color-slider-value {
-  margin-left: -1375px;
   color: #CB2E81;
   margin-top: -14px;
 }
@@ -848,15 +843,15 @@ input[type="checkbox"]:focus + label {
   right: 0px;
 }
 
-.color-left-side {
+/* .color-left-side {
   margin-top: 70px !important;
-}
+} */
 
 .bordered-block-saturation {
   width: auto;
   height: 137px;
   margin-right: 20px;
-  margin-top: -15px;
+  margin-top: 8px;
 }
 
 .bordered-block h1 {
@@ -913,3 +908,46 @@ input[type="checkbox"]:focus + label {
 /* .color input[type=range]::-webkit-slider-thumb:active > #color-slider-value {
   margin-top: 200px !important;
 } */
+
+.file-input-group {
+  margin-top: 31px;
+}
+
+.file-input-group input[type=file] {
+  display: none;
+}
+
+.file-input-group label {
+  position: absolute;
+  margin: auto;
+  height: 54px;
+  width: 26rem;
+  top: 0;
+  bottom: 0;
+  left: -285px;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 30px;
+  font-weight: 700;
+  border-radius: 60px;
+  color: white;
+  background-color: #CB2E81;
+  border: 4px solid white;
+  cursor: pointer;
+}
+
+.file-input-group label:hover {
+  background-color: #09a1e5
+}
+
+.file-input-group label:active {
+  color: #CB2E81;
+  background-color: #050C3F;
+  border-color: #CB2E81;
+}
+
+.question-panel-color {
+  margin-right: 18px;
+}

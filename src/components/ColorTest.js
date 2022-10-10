@@ -11,7 +11,6 @@ export const ColorTest = () => {
     const [isActivePopout, setActivePopout] = useState(false);
     const [openPopout, setOpenPopout] = useState(false);
     const [colorSliderValue, setColorSliderValue] = useState(0);
-    const [drag, setDrag] = useState(true);
 
     useEffect(() => {
         let context1 = canvas1.current.getContext("2d");
@@ -30,28 +29,47 @@ export const ColorTest = () => {
 
     const dragStartHandler = (e) => {
         e.preventDefault();
-        setDrag(true);
     }
 
     const dragLeaveHandler = (e) => {
         e.preventDefault();
-        setDrag(false);
     }
 
-    const onDropHandler = (currCanvas, e) => {
+    const onDropHandler = (e) => {
         e.preventDefault();
-        let canvas = currCanvas === 'canvas-1' ? canvas1.current : canvas2.current;
-        setDrag(false);
-        let files = [...e.dataTransfer.files];
+        drawImageWithFile(e.dataTransfer.files[0])
+    }
 
-        let context = canvas.getContext('2d');
+    const onSelectImage = (e) => {
+        drawImageWithFile(e.target.files[0]);
+    }
+
+    const drawImageWithFile = (file) => {
+        document.getElementById('color-display-R').innerHTML = 255;
+        document.getElementById('color-display-G').innerHTML = 255;
+        document.getElementById('color-display-B').innerHTML = 255;
+        document.getElementById('first-dispay-color-block').style.backgroundColor = 'rgb(255, 255, 255)';
+
+        document.getElementById('color-display-H').innerHTML = '0°';
+        document.getElementById('color-display-S').innerHTML = '0%';
+        document.getElementById('color-display-V').innerHTML = '100%';
+        document.getElementById('second-dispay-color-block').style.backgroundColor = 'rgb(255, 255, 255)';
+        setColorSliderValue(0);
+        document.getElementById('color-slider-value').style.marginLeft = '0px';
+        document.getElementById('color-slider').value = 0;
+
+        let context1 = canvas1.current.getContext("2d");
+        let context2 = canvas2.current.getContext("2d");
+        context1.fillStyle = "white";
+        context2.fillStyle = "white";
+        context1.fillRect(0, 0, canvas1.current.width, canvas1.current.height);
+        context2.fillRect(0, 0, canvas2.current.width, canvas2.current.height);
         let img = new Image();
-
-        img.src = URL.createObjectURL(files[0]);
+        img.src = URL.createObjectURL(file);
         img.onload = function() {
-            context.drawImage(img, 0, 0);
+            context1.drawImage(img, 0, 0);
+            context2.drawImage(img, 0, 0);
         }
-        setDrag(false);
     }
 
     const mouseOver = () => {
@@ -117,9 +135,9 @@ export const ColorTest = () => {
             document.getElementById('first-dispay-color-block').style.backgroundColor = `rgb(${r}, ${g}, ${b})`;
         } else {
             let [h, s, v] = RGBToHSV([r, g, b]);
-            document.getElementById('color-display-H').innerHTML = `${h % 1 === 0 ? h : h.toFixed(2)}°`;
-            document.getElementById('color-display-S').innerHTML = `${s % 1 === 0 ? s : s.toFixed(2)}%`;
-            document.getElementById('color-display-V').innerHTML = `${v % 1 === 0 ? v : v.toFixed(2)}%`;
+            document.getElementById('color-display-H').innerHTML = `${Math.round(h)}°`;
+            document.getElementById('color-display-S').innerHTML = `${Math.round(s)}%`;
+            document.getElementById('color-display-V').innerHTML = `${Math.round(v)}%`;
             document.getElementById('second-dispay-color-block').style.backgroundColor = `rgb(${r}, ${g}, ${b})`;
         }
     }
@@ -181,17 +199,19 @@ export const ColorTest = () => {
     }
 
     const setSaturation = (saturation) => {
-        console.log(saturation)
+        let context1 = canvas1.current.getContext('2d');
         let context2 = canvas2.current.getContext('2d');
         let { width, height } = canvas1.current.getBoundingClientRect();
         let [r, g, b] = [];
         let [h, s, v] = [];
         for(var i = 0; i < height; ++i) {
             for(var j = 0; j < width; ++j) {
-                [r, g, b] = getCanvasPixelColor(canvas1.current, i, j);
+                [r, g, b] = context1.getImageData(i, j, 1, 1).data; //getCanvasPixelColor(canvas1.current, i, j);
                 [h, s, v] = RGBToHSV([r, g, b]);
-                if(h >= 50 && h <= 70) {
-                    s = saturation;
+                if(h >= 70 && h <= 170) {
+                    s += saturation;
+                    if(s > 100) s = 100;
+                    if(s < 0) s = 0;
                     [r, g, b] = HSVToRGB([h, s, v]);
                 }
                 var id = context2.createImageData(1,1); 
@@ -218,7 +238,20 @@ export const ColorTest = () => {
             <section className='color' id="color">
                 <Container fluid className='justify-content-center text-center align-items-center'>
                     <Row> 
-                        <Col xs={12} md={6} xl={6} className='color-left-side'>
+                    {/* className='color-left-side' */}
+                        <Col xs={12} md={6} xl={6}>
+                            <div className='question-panel'>
+                                <div className='file-input-group'>
+                                    <input type="file" id='image-uploader'
+                                        accept="image/*" 
+                                        className='popout-button' 
+                                        onChange={onSelectImage}
+                                        onClick={e => e.target.value = ''}
+                                    >
+                                    </input>
+                                    <label htmlFor="image-uploader" className='input-group-text'>Select image</label>
+                                </div>
+                            </div>          
                             <div className='circled-table' id='circled-table'>
                                 <table id='table-1' className='d-block'>
                                     <tbody>
@@ -245,7 +278,7 @@ export const ColorTest = () => {
                                     onDragStart={e => dragStartHandler(e)}
                                     onDragLeave={e => dragLeaveHandler(e)}
                                     onDragOver={e => dragStartHandler(e)}
-                                    onDrop={e => onDropHandler('canvas-1', e)}
+                                    onDrop={e => onDropHandler(e)}
 
                                     onMouseOver={() => mouseOver()}
                                     onMouseOut={() => mouseOut()}
@@ -277,7 +310,7 @@ export const ColorTest = () => {
                             </div>
                         </Col>
                         <Col xs={12} md={6} xl={6}>      
-                            <div className='question-panel'>
+                            <div className='question-panel question-panel-color'>
                                 <div className='image-div'>
                                     <img src={isActivePopout ? questionRobotActive : questionRobot} alt="robot"/>
                                 </div>
@@ -296,7 +329,7 @@ export const ColorTest = () => {
                                     onDragStart={e => dragStartHandler(e)}
                                     onDragLeave={e => dragLeaveHandler(e)}
                                     onDragOver={e => dragStartHandler(e)}
-                                    onDrop={e => onDropHandler('canvas-2', e)}
+                                    onDrop={e => onDropHandler(e)}
 
                                     onMouseOver={() => mouseOver()}
                                     onMouseOut={() => mouseOut()}
@@ -308,19 +341,19 @@ export const ColorTest = () => {
                                     <Col xs={12} md={6} xl={4}>
                                         <h1>H</h1>
                                         <div className='bg-white w-75 m-auto'>
-                                            <h1 id='color-display-H' className='text-black'>255</h1>
+                                            <h1 id='color-display-H' className='text-black'>0°</h1>
                                         </div>
                                     </Col>
                                     <Col xs={12} md={6} xl={4}>
                                         <h1>S</h1>
                                         <div className='bg-white w-75 m-auto'>
-                                            <h1 id='color-display-S' className='text-black'>255</h1>
+                                            <h1 id='color-display-S' className='text-black'>0%</h1>
                                         </div>
                                     </Col>
                                     <Col xs={12} md={6} xl={4}>
                                         <h1>V</h1>
                                         <div className='bg-white w-75 m-auto'>
-                                            <h1 id='color-display-V' className='text-black'>255</h1>
+                                            <h1 id='color-display-V' className='text-black'>100%</h1>
                                         </div>
                                     </Col>
                                 </Row>
@@ -328,15 +361,14 @@ export const ColorTest = () => {
                             </div>
                         </Col>
                     </Row>
-                    <br></br>
                     <div className='border border-3 bordered-block bordered-block-saturation'>
                         <h1>Green color saturation</h1>
                         <p className='fs-4' id='color-slider-value'>{colorSliderValue}%</p>
                         <div className="slider-container w-auto color-slider">
-                            <input id='color-slider' defaultValue='0' type="range" min="0" max="100" step='1' onInput={(event) => {
+                            <input id='color-slider' defaultValue='0' type="range" min="-50" max="50" step='1' onInput={(event) => {
                                 setSaturation(Number(event.target.value));
                                 setColorSliderValue(event.target.value);
-                                document.getElementById('color-slider-value').style.marginLeft = Number(event.target.value) * 27.6 + -1375 + 'px';
+                                document.getElementById('color-slider-value').style.marginLeft = Number(event.target.value) * 27.55 + 'px';
                             }}/>
                         </div>
                     </div>
