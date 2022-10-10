@@ -11,7 +11,11 @@ export const ColorTest = () => {
     const [isActivePopout, setActivePopout] = useState(false);
     const [openPopout, setOpenPopout] = useState(false);
     const [colorSliderValue, setColorSliderValue] = useState(0);
-    const [imagePixels, setImagePixels] = useState([])
+    const [currHSVCoordinates, setCurrHSVCoordinates] = useState({ 
+        isSet: false, 
+        x: 0, 
+        y: 0
+    })
 
     useEffect(() => {
         let context1 = canvas1.current.getContext("2d");
@@ -58,6 +62,11 @@ export const ColorTest = () => {
         setColorSliderValue(0);
         document.getElementById('color-slider-value').style.marginLeft = '0px';
         document.getElementById('color-slider').value = 0;
+        setCurrHSVCoordinates({
+            isSet: false, 
+            x: 0, 
+            y: 0
+        });
 
         let context1 = canvas1.current.getContext("2d");
         let context2 = canvas2.current.getContext("2d");
@@ -70,17 +79,6 @@ export const ColorTest = () => {
         img.onload = function() {
             context1.drawImage(img, 0, 0);
             context2.drawImage(img, 0, 0);
-            
-            let { width, height } = canvas1.current.getBoundingClientRect();
-            let pixels = [];
-            let k = 0;
-            for(var i = 0; i < height; ++i) {
-                for(var j = 0; j < width; ++j, ++k) {
-                    let [r, g, b] = context1.getImageData(i, j, 1, 1).data;
-                    pixels.push([r, g, b]);
-                }
-            }
-            setImagePixels(pixels);
         }
     }
 
@@ -104,7 +102,6 @@ export const ColorTest = () => {
         let rect = canvas.getBoundingClientRect();
         let x = parseInt(((event.clientX - rect.left) / (rect.right - rect.left)) * canvas.width);
         let y = parseInt(((event.clientY - rect.top) / (rect.bottom - rect.top)) * canvas.height);
-        let isBlank = isCanvasBlank(canvas);
         let [ r, g, b ] = [];
         for(var i = -5; i < 6; ++i)
         {
@@ -112,8 +109,6 @@ export const ColorTest = () => {
             {
                 if (x + i < 0 || y + j < 0 || x + i >= canvas.width || y + j >= canvas.height)
                     [ r, g, b ] = [ 8, 12, 60 ];
-                else if(isBlank) 
-                    [ r, g, b ] = [ 255, 255, 255 ];
                 else 
                     [ r, g, b ] = getCanvasPixelColor(canvas, x + i, y + j);
                 document.getElementById(`row-${j + 5}-col-${i + 5}`).style.backgroundColor = `rgb(${r}, ${g}, ${b})`;
@@ -122,24 +117,22 @@ export const ColorTest = () => {
         document.getElementById('pixel-coordinates').innerHTML = `x: ${x}⠀y: ${y}`;
     }
 
-    const isCanvasBlank = (canvas) => {
-        return !canvas.getContext('2d')
-          .getImageData(0, 0, canvas.width, canvas.height).data
-          .some(channel => channel !== 0);
-    }
 
     const getPixel = (currCanvas, event) => {
         let canvas = currCanvas === 'canvas-1' ? canvas1.current : canvas2.current;
-        let [ r, g, b ] = [];
-        if(isCanvasBlank(canvas)) 
-            [ r, g, b ] = [ 255, 255, 255 ];
-        else {
-            let rect = canvas.getBoundingClientRect();
-            let x = parseInt(((event.clientX - rect.left) / (rect.right - rect.left)) * canvas.width);
-            let y = parseInt(((event.clientY - rect.top) / (rect.bottom - rect.top)) * canvas.height);
-            [ r, g, b ] = getCanvasPixelColor(canvas, x, y);
-        }
+        let rect = canvas.getBoundingClientRect();
+        let x = parseInt(((event.clientX - rect.left) / (rect.right - rect.left)) * canvas.width);
+        let y = parseInt(((event.clientY - rect.top) / (rect.bottom - rect.top)) * canvas.height);
+        setPixelWithXY(currCanvas, x, y);
+        if(currCanvas === 'canvas-2' && !currHSVCoordinates.isSet) 
+            currHSVCoordinates.isSet = true;
+        currHSVCoordinates.x = x;
+        currHSVCoordinates.y = y;
+    }
 
+    const setPixelWithXY = (currCanvas, x, y) => {
+        let canvas = currCanvas === 'canvas-1' ? canvas1.current : canvas2.current;
+        let [ r, g, b ] = getCanvasPixelColor(canvas, x, y);
         if(currCanvas === 'canvas-1') {
             document.getElementById('color-display-R').innerHTML = r;
             document.getElementById('color-display-G').innerHTML = g;
@@ -227,6 +220,14 @@ export const ColorTest = () => {
             [rgbPixels[i], rgbPixels[i + 1], rgbPixels[i + 2]] = HSVToRGB([h, s, v]);
         }
         context2.putImageData(imageData, 0, 0);
+        if(currHSVCoordinates.isSet) {
+            setPixelWithXY('canvas-2', currHSVCoordinates.x, currHSVCoordinates.y);
+        }
+    }
+
+    const setCurrHue = () => {
+        if(currHSVCoordinates.isSet) 
+            document.getElementById('color-display-H').innerHTML = `${Math.round(RGBToHSV(getCanvasPixelColor(canvas1.current, currHSVCoordinates.x, currHSVCoordinates.y))[0])}°`;
     }
 
     return(
@@ -369,10 +370,11 @@ export const ColorTest = () => {
                         <h1>Green color saturation</h1>
                         <p className='fs-4' id='color-slider-value'>{colorSliderValue}%</p>
                         <div className="slider-container w-auto color-slider">
-                            <input id='color-slider' defaultValue='0' type="range" min="-50" max="50" step='1' onInput={(event) => {
+                            <input id='color-slider' defaultValue='0' type="range" min="-100" max="100" step='1' onInput={(event) => {
                                 setSaturation(Number(event.target.value));
+                                setCurrHue();
                                 setColorSliderValue(event.target.value);
-                                document.getElementById('color-slider-value').style.marginLeft = Number(event.target.value) * 27.55 + 'px';
+                                document.getElementById('color-slider-value').style.marginLeft = Number(event.target.value) * 13.8 + 'px';
                             }}/>
                         </div>
                     </div>
