@@ -96,6 +96,7 @@ export const ColorTest = () => {
         img.onload = function() {
             drawImageScaled(img, context1);
             drawImageScaled(img, context2);
+            setSaturation();
         }
     }
 
@@ -289,7 +290,7 @@ export const ColorTest = () => {
     }
 
     const setCurrHue = () => {
-        if(currHSVCoordinates.isSet) 
+        if(currHSVCoordinates.isSet && colorSliderValueV === 0) 
             document.getElementById('color-display-H').innerHTML = `${Math.round(RGBToHSV(getCanvasPixelColor(canvas1.current, currHSVCoordinates.x, currHSVCoordinates.y))[0])}°`;
     }
 
