@@ -289,15 +289,14 @@ export const ColorTest = () => {
             <Popout 
                 open={openPopout} 
                 onClose={() => setOpenPopout(false)} 
-                header='Color' 
-                text='A fractal is a never-ending pattern. Fractals are infinitely complex patterns that are self-similar across different scales. They are created by repeating a simple process over and over in an ongoing feedback loop. Driven by recursion, fractals are images of dynamic systems – the pictures of Chaos.'
-                nextHeader='Koch curve'
-                nextText='Koch curve is a fractal curve. The Koch snowflake starts with an equilateral triangle or square, then recursively altering each line segment as follows: divide the line segment into three segments and draw an equilateral triangle that has the middle segment from step 1 as its base and points outward.'
+                header='RGB' 
+                text='The RGB color model is an additive color model in which the red, green, and blue primary colors of light are added together in various ways to reproduce a broad array of colors. The main purpose of the RGB color model is for the sensing, representation, and display of images in electronic systems.'
+                nextHeader='HSV'
+                nextText='HSV is closer to how humans perceive color. It has three components: hue, saturation, and value. This color space describes colors (hue or tint) in terms of their shade (saturation or amount of gray) and their brightness value. Moreover, the HSV color wheel also contributes to high-quality graphics.'
             />
             <section className='color' id="color">
                 <Container fluid className='justify-content-center text-center align-items-center'>
                     <Row> 
-                    {/* className='color-left-side' */}
                         <Col xs={12} md={6} xl={6}>
                             <div className='question-panel'>
                                 <div className='file-input-group'>
@@ -439,96 +438,25 @@ export const ColorTest = () => {
                             <FontAwesomeIcon icon={faInfoCircle} size="2x" className='icon-4'/>
                         </Tippy>
                         <Row>
-                            <Col xs={12} md={6} xl={2} className='d-flex justify-content-center'>
-                                <span className={`navbar-button ${currColorSaturation !== 'Red' ? "navbar-button-slide" : "fractal-dotted-button"}`}>
-                                    <div className={currColorSaturation !== 'Red' ? "" : "gradient-saturation"}>
-                                        <button className='figure-button' onClick={() => {
-                                            setCurrColorSaturation('Red');
-                                            setColorSliderValue(0);
-                                            document.getElementById('color-slider-value').style.marginLeft = '0px';
-                                            document.getElementById('color-slider').value = 0;
-                                            setSaturation(0);
-                                        }}>
-                                            <div className={`color-block-saturation ${currColorSaturation !== 'Red' ? "border-white" : "border-active"}`} style={{backgroundColor: 'red'}}/>
-                                        </button>
-                                    </div>
-                                </span>
-                            </Col>
-                            <Col xs={12} md={6} xl={2} className='d-flex justify-content-center'>
-                                <span className={`navbar-button ${currColorSaturation !== 'Yellow' ? "navbar-button-slide" : "fractal-dotted-button"}`}>
-                                    <div className={currColorSaturation !== 'Yellow' ? "" : "gradient-saturation"}>
-                                        <button className='figure-button' onClick={() => {
-                                            setCurrColorSaturation('Yellow');
-                                            setColorSliderValue(0);
-                                            document.getElementById('color-slider-value').style.marginLeft = '0px';
-                                            document.getElementById('color-slider').value = 0;
-                                            setSaturation(0);
-                                        }}>
-                                            <div className={`color-block-saturation ${currColorSaturation !== 'Yellow' ? "border-white" : "border-active"}`} style={{backgroundColor: 'yellow'}}/>
-                                        </button>
-                                    </div>
-                                </span>
-                            </Col>
-                            <Col xs={12} md={6} xl={2} className='d-flex justify-content-center'>
-                                <span className={`navbar-button ${currColorSaturation !== 'Green' ? "navbar-button-slide" : "fractal-dotted-button"}`}>
-                                    <div className={currColorSaturation !== 'Green' ? "" : "gradient-saturation"}>
-                                        <button className='figure-button' onClick={() => {
-                                            setCurrColorSaturation('Green');
-                                            setColorSliderValue(0);
-                                            document.getElementById('color-slider-value').style.marginLeft = '0px';
-                                            document.getElementById('color-slider').value = 0;
-                                            setSaturation(0);
-                                        }}>
-                                            <div className={`color-block-saturation ${currColorSaturation !== 'Green' ? "border-white" : "border-active"}`} style={{backgroundColor: 'green'}}/>
-                                        </button>
-                                    </div>
-                                </span>
-                            </Col>
-                            <Col xs={12} md={6} xl={2} className='d-flex justify-content-center'>
-                                <span className={`navbar-button ${currColorSaturation !== 'Cyan' ? "navbar-button-slide" : "fractal-dotted-button"}`}>
-                                    <div className={currColorSaturation !== 'Cyan' ? "" : "gradient-saturation"}>
-                                        <button className='figure-button' onClick={() => {
-                                            setCurrColorSaturation('Cyan');
-                                            setColorSliderValue(0);
-                                            document.getElementById('color-slider-value').style.marginLeft = '0px';
-                                            document.getElementById('color-slider').value = 0;
-                                            setSaturation(0);
-                                        }}>
-                                            <div className={`color-block-saturation ${currColorSaturation !== 'Cyan' ? "border-white" : "border-active"}`} style={{backgroundColor: 'cyan'}}/>
-                                        </button>
-                                    </div>
-                                </span>
-                            </Col>
-                            <Col xs={12} md={6} xl={2} className='d-flex justify-content-center'>
-                                <span className={`navbar-button ${currColorSaturation !== 'Blue' ? "navbar-button-slide" : "fractal-dotted-button"}`}>
-                                    <div className={currColorSaturation !== 'Blue' ? "" : "gradient-saturation"}>
-                                        <button className='figure-button' onClick={() => {
-                                            setCurrColorSaturation('Blue');
-                                            setColorSliderValue(0);
-                                            document.getElementById('color-slider-value').style.marginLeft = '0px';
-                                            document.getElementById('color-slider').value = 0;
-                                            setSaturation(0);
-                                        }}>
-                                            <div className={`color-block-saturation ${currColorSaturation !== 'Blue' ? "border-white" : "border-active"}`} style={{backgroundColor: 'blue'}}/>
-                                        </button>
-                                    </div>
-                                </span>
-                            </Col>
-                            <Col xs={12} md={6} xl={2} className='d-flex justify-content-center'>
-                                <span className={`navbar-button ${currColorSaturation !== 'Magenta' ? "navbar-button-slide" : "fractal-dotted-button"}`}>
-                                    <div className={currColorSaturation !== 'Magenta' ? "" : "gradient-saturation"}>
-                                        <button className='figure-button' onClick={() => {
-                                            setCurrColorSaturation('Magenta');
-                                            setColorSliderValue(0);
-                                            document.getElementById('color-slider-value').style.marginLeft = '0px';
-                                            document.getElementById('color-slider').value = 0;
-                                            setSaturation(0);
-                                        }}>
-                                            <div className={`color-block-saturation ${currColorSaturation !== 'Magenta' ? "border-white" : "border-active"}`} style={{backgroundColor: 'magenta'}}/>
-                                        </button>
-                                    </div>
-                                </span>
-                            </Col>
+                            {
+                                ['Red', 'Yellow', 'Green', 'Cyan', 'Blue', 'Magenta'].map((color, _) => {
+                                    return <Col xs={12} md={6} xl={2} className='d-flex justify-content-center'>
+                                        <span className={`navbar-button ${currColorSaturation !== color ? "navbar-button-slide" : "fractal-dotted-button"}`}>
+                                            <div className={currColorSaturation !== color ? "" : "gradient-saturation"}>
+                                                <button className='figure-button' onClick={() => {
+                                                    setCurrColorSaturation(color);
+                                                    setColorSliderValue(0);
+                                                    document.getElementById('color-slider-value').style.marginLeft = '0px';
+                                                    document.getElementById('color-slider').value = 0;
+                                                    setSaturation(0);
+                                                }}>
+                                                    <div className={`color-block-saturation ${currColorSaturation !== color ? "border-white" : "border-active"}`} style={{backgroundColor: color}}/>
+                                                </button>
+                                            </div>
+                                        </span>
+                                    </Col>
+                                })
+                            }
                         </Row>
                         <p className='fs-4' id='color-slider-value'>{colorSliderValue}%</p>
                         <div className="slider-container w-auto color-slider">
