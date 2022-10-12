@@ -825,7 +825,6 @@ input[type="checkbox"]:focus + .reverse-input-tick {
 
 #color-slider-value {
   color: #CB2E81;
-  margin-top: -14px;
 }
 
 .image-container {
@@ -843,13 +842,14 @@ input[type="checkbox"]:focus + .reverse-input-tick {
   right: 0px;
 }
 
-/* .color-left-side {
-  margin-top: 70px !important;
-} */
+.color-left-side {
+  margin-left: -107px;
+}
 
 .bordered-block-saturation {
   width: auto;
-  height: 137px;
+  height: 240px;
+  margin-left: 20px;
   margin-right: 20px;
   margin-top: 8px;
 }
@@ -953,5 +953,67 @@ input[type="checkbox"]:focus + .reverse-input-tick {
 }
 
 .question-panel-color {
-  margin-right: 18px;
+  margin-right: 72px;
+}
+
+.color-block-saturation {
+  min-width: 50px;
+  min-height: 50px;
+}
+
+.border-white {
+  border: 3.5px solid white;
+}
+
+.border-active {
+  border: 3.5px solid #CB2E81;
+}
+
+.gradient-saturation {
+  background: 
+      linear-gradient(90deg, #CB2E81 50%, transparent 0) repeat-x,
+      linear-gradient(90deg, #CB2E81 50%, transparent 0) repeat-x,
+      linear-gradient(0deg, #CB2E81 50%, transparent 0) repeat-y,
+      linear-gradient(0deg, #CB2E81 50%, transparent 0) repeat-y;
+  background-size: 26px 3.5px, 26px 3.5px, 3.5px 26px, 3.5px 26px;
+  background-position: 0 0, 0 100%, 0 0, 100% 0;
+  animation: effectChoosedColorSaturation 2.5s infinite linear;
+}
+
+@keyframes effectChoosedColorSaturation {
+  100% {
+      background-position: 26px 0, -26px 100%, 0 -26px, 100% 26px;
+  }
+} 
+
+.color .figure-button {
+  width: 10rem;
+  height: 5rem;
+}
+
+.input-group-text {
+  margin-left: 358px !important;
+}
+
+.export-color-image-1 {
+  position: absolute;
+  margin-left: 673px;
+  margin-top: -26px;
+}
+
+.export-color-image-2 {
+  position: absolute;
+  margin-left: -285px;
+  margin-top: -53px;
+}
+
+.export-color-image-1 button, .export-color-image-2 button {
+  height: 65px;
+  width: 100px;
+}
+
+.icon-4 {
+  float: left;
+  margin-top: -54px;
+  margin-left: 1080px;
 }

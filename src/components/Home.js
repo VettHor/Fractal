@@ -42,7 +42,7 @@ export const Home = props => {
                 <Row className='align-items-center'>
                     <Col xs={12} md={6} xl={7}>
                         <h1><span className='wrap'>{text + ' !'}</span></h1>
-                        <p>Let's look into the world of<br/>fractals and reproduce them!</p>
+                        <p>Let's look into the world of<br/>graphics and interact with it!</p>
                         <span className="navbar-button navbar-button-slide home-button">
                             <button onClick={() => { 
                                 props.changeLink('fractal');

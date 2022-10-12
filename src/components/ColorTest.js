@@ -4,6 +4,12 @@ import { Popout } from './Popout'
 import getCanvasPixelColor from 'get-canvas-pixel-color';
 import questionRobot from '../assets/img/question_robot.png';
 import questionRobotActive from '../assets/img/question_robot_active.png';
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
+import { faDownload, faInfoCircle } from "@fortawesome/free-solid-svg-icons"
+import { saveAs } from 'file-saver'
+import Tippy from '@tippyjs/react';
+import 'tippy.js/dist/tippy.css'
+import 'tippy.js/animations/scale.css';
 
 export const ColorTest = () => {
     const canvas1 = useRef(null);
@@ -15,7 +21,8 @@ export const ColorTest = () => {
         isSet: false, 
         x: 0, 
         y: 0
-    })
+    });
+    const [currColorSaturation, setCurrColorSaturation] = useState('Green');
 
     useEffect(() => {
         let context1 = canvas1.current.getContext("2d");
@@ -77,9 +84,19 @@ export const ColorTest = () => {
         let img = new Image();
         img.src = URL.createObjectURL(file);
         img.onload = function() {
-            context1.drawImage(img, 0, 0);
-            context2.drawImage(img, 0, 0);
+            drawImageScaled(img, context1);
+            drawImageScaled(img, context2);
         }
+    }
+
+    const drawImageScaled = (img, ctx) => {
+        var canvas = ctx.canvas;
+        var hRatio = canvas.width / img.width;
+        var vRatio = canvas.height / img.height;
+        var ratio = Math.min(hRatio, vRatio);
+        var centerShift_x = (canvas.width - img.width * ratio) / 2;
+        var centerShift_y = (canvas.height - img.height * ratio) / 2;  
+        ctx.drawImage(img, 0, 0, img.width, img.height, centerShift_x, centerShift_y, img.width * ratio, img.height * ratio);  
     }
 
     const mouseOver = () => {
@@ -124,10 +141,12 @@ export const ColorTest = () => {
         let x = parseInt(((event.clientX - rect.left) / (rect.right - rect.left)) * canvas.width);
         let y = parseInt(((event.clientY - rect.top) / (rect.bottom - rect.top)) * canvas.height);
         setPixelWithXY(currCanvas, x, y);
-        if(currCanvas === 'canvas-2' && !currHSVCoordinates.isSet) 
-            currHSVCoordinates.isSet = true;
-        currHSVCoordinates.x = x;
-        currHSVCoordinates.y = y;
+        if(currCanvas === 'canvas-2') {
+            currHSVCoordinates.x = x;
+            currHSVCoordinates.y = y;
+            if(!currHSVCoordinates.isSet)
+                currHSVCoordinates.isSet = true;
+        }
     }
 
     const setPixelWithXY = (currCanvas, x, y) => {
@@ -203,6 +222,35 @@ export const ColorTest = () => {
         ];
     }
 
+    const getCurrentColorRange = () => {
+        if(currColorSaturation === 'Yellow')
+            return {
+                from: 31,
+                to: 90
+            };
+        if(currColorSaturation === 'Green')
+            return {
+                from: 91,
+                to: 150
+            };
+        if(currColorSaturation === 'Cyan')
+            return {
+                from: 151,
+                to: 210
+            };
+        if(currColorSaturation === 'Blue')
+            return {
+                from: 211,
+                to: 270
+            };
+        if(currColorSaturation === 'Magenta')
+            return {
+                from: 271,
+                to: 330
+            };
+        return null;
+    }
+
     const setSaturation = (saturation) => {
         let context1 = canvas1.current.getContext('2d');
         let context2 = canvas2.current.getContext('2d');
@@ -210,9 +258,10 @@ export const ColorTest = () => {
         let imageData = context1.getImageData(0, 0, width, height);
         let rgbPixels = imageData.data;
         let [h, s, v] = [];
+        let range = getCurrentColorRange();
         for(var i = 0; i < rgbPixels.length; i += 4) {
             [h, s, v] = RGBToHSV([rgbPixels[i], rgbPixels[i + 1], rgbPixels[i + 2]]);
-            if(h >= 70 && h <= 170) {
+            if(range !== null ? h >= range.from && h <= range.to : s != 0 && ((h >= 0 && h <= 30) || (h >= 331 && h <= 360))) {
                 s += saturation;
                 if(s > 100) s = 100;
                 if(s < 0) s = 0;
@@ -230,6 +279,11 @@ export const ColorTest = () => {
             document.getElementById('color-display-H').innerHTML = `${Math.round(RGBToHSV(getCanvasPixelColor(canvas1.current, currHSVCoordinates.x, currHSVCoordinates.y))[0])}°`;
     }
 
+    const exportColorImage = (currCanvas) => {
+        let canvas = currCanvas === 'canvas-1' ? canvas1.current : canvas2.current;
+        saveAs(canvas.toDataURL("image/png"), 'GraphicsImage');
+    }
+    
     return(
         <div>
             <Popout 
@@ -256,7 +310,12 @@ export const ColorTest = () => {
                                     </input>
                                     <label htmlFor="image-uploader" className='input-group-text'>Select image</label>
                                 </div>
-                            </div>          
+                                <div className='export-div export-color-image-1'>
+                                    <span className='navbar-button navbar-button-slide home-button'>
+                                        <button type='submit' onClick={() => exportColorImage('canvas-1')}><FontAwesomeIcon icon={faDownload} size="2x"/></button>
+                                    </span>
+                                </div>    
+                            </div>      
                             <div className='circled-table' id='circled-table'>
                                 <table id='table-1' className='d-block'>
                                     <tbody>
@@ -290,8 +349,8 @@ export const ColorTest = () => {
                                     onMouseMove={e => mouseMove('canvas-1', e)}
                                     onClick={e => getPixel('canvas-1', e)}
                             />
-                            <div className='border border-3 bordered-block'>
-                                <Row>
+                            <div className='border border-3 bordered-block m-auto'>
+                                <Row className=''>
                                     <Col xs={12} md={6} xl={4}>
                                         <h1>R</h1>
                                         <div className='bg-white w-75 m-auto'>
@@ -328,6 +387,11 @@ export const ColorTest = () => {
                                         onMouseDownCapture={() => setActivePopout(true)}> 
                                         <span>Color?</span>
                                     </button>
+                                    <div className='export-div export-color-image-2'>
+                                        <span className='navbar-button navbar-button-slide home-button'>
+                                            <button type='submit' onClick={() => exportColorImage('canvas-2')}><FontAwesomeIcon icon={faDownload} size="2x"/></button>
+                                        </span>
+                                    </div>  
                                 </div>
                             </div>                  
                             <canvas ref={canvas2} className='image-container'
@@ -341,7 +405,7 @@ export const ColorTest = () => {
                                     onMouseMove={e => mouseMove('canvas-2', e)}
                                     onClick={e => getPixel('canvas-2',e)}
                                 />
-                            <div className='border border-3 bordered-block'>
+                            <div className='border border-3 bordered-block m-auto'>
                                 <Row>
                                     <Col xs={12} md={6} xl={4}>
                                         <h1>H</h1>
@@ -367,14 +431,112 @@ export const ColorTest = () => {
                         </Col>
                     </Row>
                     <div className='border border-3 bordered-block bordered-block-saturation'>
-                        <h1>Green color saturation</h1>
+                        <h1 className='mt-2 mb-3'><span style={{color : currColorSaturation}}>{currColorSaturation}</span> color saturation</h1>
+                        <Tippy placement='right' animation='scale' theme={'fractal'} content={
+                                <div className='text-center'>
+                                    <span className='fs-4'>Modifies the intensity of a certain tone among the selected color when sliding the slider</span>
+                                </div>}>
+                            <FontAwesomeIcon icon={faInfoCircle} size="2x" className='icon-4'/>
+                        </Tippy>
+                        <Row>
+                            <Col xs={12} md={6} xl={2} className='d-flex justify-content-center'>
+                                <span className={`navbar-button ${currColorSaturation !== 'Red' ? "navbar-button-slide" : "fractal-dotted-button"}`}>
+                                    <div className={currColorSaturation !== 'Red' ? "" : "gradient-saturation"}>
+                                        <button className='figure-button' onClick={() => {
+                                            setCurrColorSaturation('Red');
+                                            setColorSliderValue(0);
+                                            document.getElementById('color-slider-value').style.marginLeft = '0px';
+                                            document.getElementById('color-slider').value = 0;
+                                            setSaturation(0);
+                                        }}>
+                                            <div className={`color-block-saturation ${currColorSaturation !== 'Red' ? "border-white" : "border-active"}`} style={{backgroundColor: 'red'}}/>
+                                        </button>
+                                    </div>
+                                </span>
+                            </Col>
+                            <Col xs={12} md={6} xl={2} className='d-flex justify-content-center'>
+                                <span className={`navbar-button ${currColorSaturation !== 'Yellow' ? "navbar-button-slide" : "fractal-dotted-button"}`}>
+                                    <div className={currColorSaturation !== 'Yellow' ? "" : "gradient-saturation"}>
+                                        <button className='figure-button' onClick={() => {
+                                            setCurrColorSaturation('Yellow');
+                                            setColorSliderValue(0);
+                                            document.getElementById('color-slider-value').style.marginLeft = '0px';
+                                            document.getElementById('color-slider').value = 0;
+                                            setSaturation(0);
+                                        }}>
+                                            <div className={`color-block-saturation ${currColorSaturation !== 'Yellow' ? "border-white" : "border-active"}`} style={{backgroundColor: 'yellow'}}/>
+                                        </button>
+                                    </div>
+                                </span>
+                            </Col>
+                            <Col xs={12} md={6} xl={2} className='d-flex justify-content-center'>
+                                <span className={`navbar-button ${currColorSaturation !== 'Green' ? "navbar-button-slide" : "fractal-dotted-button"}`}>
+                                    <div className={currColorSaturation !== 'Green' ? "" : "gradient-saturation"}>
+                                        <button className='figure-button' onClick={() => {
+                                            setCurrColorSaturation('Green');
+                                            setColorSliderValue(0);
+                                            document.getElementById('color-slider-value').style.marginLeft = '0px';
+                                            document.getElementById('color-slider').value = 0;
+                                            setSaturation(0);
+                                        }}>
+                                            <div className={`color-block-saturation ${currColorSaturation !== 'Green' ? "border-white" : "border-active"}`} style={{backgroundColor: 'green'}}/>
+                                        </button>
+                                    </div>
+                                </span>
+                            </Col>
+                            <Col xs={12} md={6} xl={2} className='d-flex justify-content-center'>
+                                <span className={`navbar-button ${currColorSaturation !== 'Cyan' ? "navbar-button-slide" : "fractal-dotted-button"}`}>
+                                    <div className={currColorSaturation !== 'Cyan' ? "" : "gradient-saturation"}>
+                                        <button className='figure-button' onClick={() => {
+                                            setCurrColorSaturation('Cyan');
+                                            setColorSliderValue(0);
+                                            document.getElementById('color-slider-value').style.marginLeft = '0px';
+                                            document.getElementById('color-slider').value = 0;
+                                            setSaturation(0);
+                                        }}>
+                                            <div className={`color-block-saturation ${currColorSaturation !== 'Cyan' ? "border-white" : "border-active"}`} style={{backgroundColor: 'cyan'}}/>
+                                        </button>
+                                    </div>
+                                </span>
+                            </Col>
+                            <Col xs={12} md={6} xl={2} className='d-flex justify-content-center'>
+                                <span className={`navbar-button ${currColorSaturation !== 'Blue' ? "navbar-button-slide" : "fractal-dotted-button"}`}>
+                                    <div className={currColorSaturation !== 'Blue' ? "" : "gradient-saturation"}>
+                                        <button className='figure-button' onClick={() => {
+                                            setCurrColorSaturation('Blue');
+                                            setColorSliderValue(0);
+                                            document.getElementById('color-slider-value').style.marginLeft = '0px';
+                                            document.getElementById('color-slider').value = 0;
+                                            setSaturation(0);
+                                        }}>
+                                            <div className={`color-block-saturation ${currColorSaturation !== 'Blue' ? "border-white" : "border-active"}`} style={{backgroundColor: 'blue'}}/>
+                                        </button>
+                                    </div>
+                                </span>
+                            </Col>
+                            <Col xs={12} md={6} xl={2} className='d-flex justify-content-center'>
+                                <span className={`navbar-button ${currColorSaturation !== 'Magenta' ? "navbar-button-slide" : "fractal-dotted-button"}`}>
+                                    <div className={currColorSaturation !== 'Magenta' ? "" : "gradient-saturation"}>
+                                        <button className='figure-button' onClick={() => {
+                                            setCurrColorSaturation('Magenta');
+                                            setColorSliderValue(0);
+                                            document.getElementById('color-slider-value').style.marginLeft = '0px';
+                                            document.getElementById('color-slider').value = 0;
+                                            setSaturation(0);
+                                        }}>
+                                            <div className={`color-block-saturation ${currColorSaturation !== 'Magenta' ? "border-white" : "border-active"}`} style={{backgroundColor: 'magenta'}}/>
+                                        </button>
+                                    </div>
+                                </span>
+                            </Col>
+                        </Row>
                         <p className='fs-4' id='color-slider-value'>{colorSliderValue}%</p>
                         <div className="slider-container w-auto color-slider">
                             <input id='color-slider' defaultValue='0' type="range" min="-100" max="100" step='1' onInput={(event) => {
                                 setSaturation(Number(event.target.value));
                                 setCurrHue();
                                 setColorSliderValue(event.target.value);
-                                document.getElementById('color-slider-value').style.marginLeft = Number(event.target.value) * 13.8 + 'px';
+                                document.getElementById('color-slider-value').style.marginLeft = Number(event.target.value) * 15.9 + 'px';
                             }}/>
                         </div>
                     </div>
