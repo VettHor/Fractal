@@ -823,7 +823,7 @@ input[type="checkbox"]:focus + .reverse-input-tick {
   margin-top: 0px;
 }
 
-#color-slider-value {
+#color-slider-value, #color-slider-value-2 {
   color: #CB2E81;
 }
 
@@ -1014,6 +1014,6 @@ input[type="checkbox"]:focus + .reverse-input-tick {
 
 .icon-4 {
   float: left;
-  margin-top: -54px;
-  margin-left: 1080px;
+  margin-top: -52px;
+  margin-left: 1220px;
 }

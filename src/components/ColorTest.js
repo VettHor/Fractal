@@ -17,6 +17,7 @@ export const ColorTest = () => {
     const [isActivePopout, setActivePopout] = useState(false);
     const [openPopout, setOpenPopout] = useState(false);
     const [colorSliderValue, setColorSliderValue] = useState(0);
+    const [colorSliderValueV, setColorSliderValueV] = useState(0);
     const [currHSVCoordinates, setCurrHSVCoordinates] = useState({ 
         isSet: false, 
         x: 0, 
@@ -33,6 +34,11 @@ export const ColorTest = () => {
         context2.fillStyle = "white";
         context2.fillRect(0, 0, canvas2.current.width, canvas2.current.height);
     }, []);
+
+    useEffect(() => {
+        setSaturation();
+        setCurrHue();
+    }, [colorSliderValue, colorSliderValueV]);
 
     const setPopoutState = (state) => {
         setActivePopout(state)
@@ -69,6 +75,10 @@ export const ColorTest = () => {
         setColorSliderValue(0);
         document.getElementById('color-slider-value').style.marginLeft = '0px';
         document.getElementById('color-slider').value = 0;
+
+        setColorSliderValueV(0);
+        document.getElementById('color-slider-value-2').style.marginLeft = '0px';
+        document.getElementById('color-slider-2').value = 0;
         setCurrHSVCoordinates({
             isSet: false, 
             x: 0, 
@@ -142,10 +152,11 @@ export const ColorTest = () => {
         let y = parseInt(((event.clientY - rect.top) / (rect.bottom - rect.top)) * canvas.height);
         setPixelWithXY(currCanvas, x, y);
         if(currCanvas === 'canvas-2') {
-            currHSVCoordinates.x = x;
-            currHSVCoordinates.y = y;
             if(!currHSVCoordinates.isSet)
                 currHSVCoordinates.isSet = true;
+            currHSVCoordinates.x = x;
+            currHSVCoordinates.y = y;
+            setCurrHue();
         }
     }
 
@@ -251,7 +262,7 @@ export const ColorTest = () => {
         return null;
     }
 
-    const setSaturation = (saturation) => {
+    const setSaturation = () => {
         let context1 = canvas1.current.getContext('2d');
         let context2 = canvas2.current.getContext('2d');
         let { width, height } = canvas1.current.getBoundingClientRect();
@@ -261,10 +272,13 @@ export const ColorTest = () => {
         let range = getCurrentColorRange();
         for(var i = 0; i < rgbPixels.length; i += 4) {
             [h, s, v] = RGBToHSV([rgbPixels[i], rgbPixels[i + 1], rgbPixels[i + 2]]);
-            if(range !== null ? h >= range.from && h <= range.to : s != 0 && ((h >= 0 && h <= 30) || (h >= 331 && h <= 360))) {
-                s += saturation;
+            if(range !== null ? h >= range.from && h <= range.to :  ((h > 0 && h <= 30) || (h >= 331 && h <= 360))) {
+                s += colorSliderValue;
+                v += colorSliderValueV;
                 if(s > 100) s = 100;
                 if(s < 0) s = 0;
+                if(v > 100) v = 100;
+                if(v < 0) v = 0;
             }
             [rgbPixels[i], rgbPixels[i + 1], rgbPixels[i + 2]] = HSVToRGB([h, s, v]);
         }
@@ -430,10 +444,10 @@ export const ColorTest = () => {
                         </Col>
                     </Row>
                     <div className='border border-3 bordered-block bordered-block-saturation'>
-                        <h1 className='mt-2 mb-3'><span style={{color : currColorSaturation}}>{currColorSaturation}</span> color saturation</h1>
+                        <h1 className='mt-2 mb-3'><span style={{color : currColorSaturation}}>{currColorSaturation}</span> color saturation and brightness</h1>
                         <Tippy placement='right' animation='scale' theme={'fractal'} content={
                                 <div className='text-center'>
-                                    <span className='fs-4'>Modifies the intensity of a certain tone among the selected color when sliding the slider</span>
+                                    <span className='fs-4'>Modifies the intensity (left slider) and brightness (right slider) of a certain tone among the selected color</span>
                                 </div>}>
                             <FontAwesomeIcon icon={faInfoCircle} size="2x" className='icon-4'/>
                         </Tippy>
@@ -448,7 +462,9 @@ export const ColorTest = () => {
                                                     setColorSliderValue(0);
                                                     document.getElementById('color-slider-value').style.marginLeft = '0px';
                                                     document.getElementById('color-slider').value = 0;
-                                                    setSaturation(0);
+                                                    setColorSliderValueV(0);
+                                                    document.getElementById('color-slider-value-2').style.marginLeft = '0px';
+                                                    document.getElementById('color-slider-2').value = 0;
                                                 }}>
                                                     <div className={`color-block-saturation ${currColorSaturation !== color ? "border-white" : "border-active"}`} style={{backgroundColor: color}}/>
                                                 </button>
@@ -458,15 +474,26 @@ export const ColorTest = () => {
                                 })
                             }
                         </Row>
-                        <p className='fs-4' id='color-slider-value'>{colorSliderValue}%</p>
-                        <div className="slider-container w-auto color-slider">
-                            <input id='color-slider' defaultValue='0' type="range" min="-100" max="100" step='1' onInput={(event) => {
-                                setSaturation(Number(event.target.value));
-                                setCurrHue();
-                                setColorSliderValue(event.target.value);
-                                document.getElementById('color-slider-value').style.marginLeft = Number(event.target.value) * 15.9 + 'px';
-                            }}/>
-                        </div>
+                        <Row>
+                            <Col xs={12} md={6} xl={6}>
+                                <p className='fs-4' id='color-slider-value'>{colorSliderValue}%</p>
+                                <div className="slider-container w-auto color-slider d-flex">
+                                    <input id='color-slider' defaultValue='0' type="range" min="-100" max="100" step='1' onInput={(event) => {
+                                        setColorSliderValue(Number(event.target.value));
+                                        document.getElementById('color-slider-value').style.marginLeft = Number(event.target.value) * 7.4 + 'px';
+                                    }}/>
+                                </div>
+                            </Col>
+                            <Col xs={12} md={6} xl={6}>
+                                <p className='fs-4' id='color-slider-value-2'>{colorSliderValueV}%</p>
+                                <div className="slider-container w-auto color-slider d-flex">
+                                    <input id='color-slider-2' defaultValue='0' type="range" min="-100" max="100" step='1' onInput={(event) => {
+                                        setColorSliderValueV(Number(event.target.value));
+                                        document.getElementById('color-slider-value-2').style.marginLeft = Number(event.target.value) * 7.4 + 'px';
+                                    }}/>
+                                </div>
+                            </Col>
+                        </Row>
                     </div>
                 </Container>
             </section>
