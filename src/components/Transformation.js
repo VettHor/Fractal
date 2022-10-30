@@ -109,32 +109,35 @@ export const Transformation = () => {
                                         <div className='bg-white border-custom-line w-50'>
                                             <Form.Group>
                                                 <Row className="justify-content-center">
-                                                    <Form.Control
-                                                        className="top-input w-75 fs-3 rounded-0 dotted-input text-center"
-                                                        placeholder='1'
-                                                        type="number"
-                                                        id='numerator'
-                                                        name="numerator"
-                                                        pattern="[1-9][0-9]*"
-                                                        onChange={(event) => SetPoint1X(event.target.value)}
-                                                        onInvalid={e => e.target.setCustomValidity('Введіть чисельник дробу, що задає відношення поділу')}
-                                                        onInput={e => e.target.setCustomValidity('')}
-                                                        required
-                                                        >
-                                                    </Form.Control>
-                                                    <Form.Control
-                                                        className="top-input w-75 fs-3 rounded-0 dotted-input text-center"
-                                                        placeholder='1'
-                                                        type="number"
-                                                        id='numerator'
-                                                        name="numerator"
-                                                        pattern="[1-9][0-9]*"
-                                                        onChange={(event) => SetPoint1X(event.target.value)}
-                                                        onInvalid={e => e.target.setCustomValidity('Введіть чисельник дробу, що задає відношення поділу')}
-                                                        onInput={e => e.target.setCustomValidity('')}
-                                                        required
-                                                        >
-                                                    </Form.Control>
+                                                    <div className='d-flex input-point parallelogram-input-point-1'>
+                                                        <h2 className='transformation-input-h2'>(</h2>
+                                                        <Form.Control
+                                                            className="transformation-input fs-3 rounded-0 dotted-input-transformation text-center"
+                                                            placeholder='1'
+                                                            type="number"
+                                                            id='numerator'
+                                                            name="numerator"
+                                                            pattern="[1-9][0-9]*"
+                                                            onChange={(event) => SetPoint1X(event.target.value)}
+                                                            onInvalid={e => e.target.setCustomValidity('Введіть чисельник дробу, що задає відношення поділу')}
+                                                            onInput={e => e.target.setCustomValidity('')}
+                                                            required
+                                                        />
+                                                        <h2 className='transformation-input-h2'>;</h2>
+                                                        <Form.Control
+                                                            className="transformation-input fs-3 rounded-0 dotted-input-transformation text-center"
+                                                            placeholder='1'
+                                                            type="number"
+                                                            id='numerator'
+                                                            name="numerator"
+                                                            pattern="[1-9][0-9]*"
+                                                            onChange={(event) => SetPoint1X(event.target.value)}
+                                                            onInvalid={e => e.target.setCustomValidity('Введіть чисельник дробу, що задає відношення поділу')}
+                                                            onInput={e => e.target.setCustomValidity('')}
+                                                            required
+                                                        />
+                                                        <h2 className='transformation-input-h2'>)</h2>
+                                                    </div>
                                                 </Row>
                                             </Form.Group>
                                         </div>

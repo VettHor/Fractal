@@ -1097,3 +1097,28 @@ input[type="checkbox"]:focus + .reverse-input-tick {
 .question-panel-transformation {
   margin-right: 150px;
 }
+
+.transformation-input {
+  margin-top: 5px;
+  margin-bottom: 5px;
+  margin-left: 5px;
+  margin-right: 5px;
+  width: 200px !important;
+}
+
+.transformation-input-h2 {
+  color: #817E7E;
+  font-size: 55px;
+  width: 50px;
+}
+
+.row .dotted-input-transformation {
+  border: dashed 4px #c0bdbd;
+  stroke-width: 2;
+}
+
+.input-point {
+  position: absolute;
+  margin-left: 1000px;
+  margin-top: -340px !important;
+}
