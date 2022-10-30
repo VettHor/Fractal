@@ -273,7 +273,7 @@ export const Color = () => {
         let range = getCurrentColorRange();
         for(var i = 0; i < rgbPixels.length; i += 4) {
             [h, s, v] = RGBToHSV([rgbPixels[i], rgbPixels[i + 1], rgbPixels[i + 2]]);
-            if(range !== null ? h >= range.from && h <= range.to :  ((h > 0 && h <= 30) || (h >= 331 && h <= 360))) {
+            if(range !== null ? h >= range.from && h <= range.to : ((h > 0 && h <= 30) || (h >= 331 && h <= 360))) {
                 s += colorSliderValue;
                 v += colorSliderValueV;
                 if(s > 100) s = 100;
@@ -352,7 +352,8 @@ export const Color = () => {
                             <div className='pixel-coordinates-panel' id='pixel-coordinates-panel'>
                                 <h1 className='pixel-coordinates' id='pixel-coordinates'>x : y :</h1>
                             </div>
-                            <canvas ref={canvas1} className='image-container'
+                            <canvas ref={canvas1} className="image-container"
+                                    width={'700xp'} height={'364px'}
                                     onDragStart={e => dragStartHandler(e)}
                                     onDragLeave={e => dragLeaveHandler(e)}
                                     onDragOver={e => dragStartHandler(e)}
@@ -408,7 +409,8 @@ export const Color = () => {
                                     </div>  
                                 </div>
                             </div>                  
-                            <canvas ref={canvas2} className='image-container'
+                            <canvas ref={canvas2} className="image-container"
+                                    width={'700xp'} height={'364px'}
                                     onDragStart={e => dragStartHandler(e)}
                                     onDragLeave={e => dragLeaveHandler(e)}
                                     onDragOver={e => dragStartHandler(e)}

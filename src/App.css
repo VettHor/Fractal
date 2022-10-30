@@ -298,7 +298,7 @@ nav.navbar {
   margin-top: 7px;
 }
 
-.fractal button, .color button {
+.fractal button, .color button, .transformation button {
   color: #fff;
   font-weight: 700;
   font-size: 20px;
@@ -319,7 +319,7 @@ nav.navbar {
   margin-top: 8px;
 }
 
-.fractal button span, .color button span {
+.fractal button span, .color button span, .transformation button span {
   font-size: 30px;
 }
 
@@ -829,8 +829,6 @@ input[type="checkbox"]:focus + .reverse-input-tick {
 
 .image-container {
   background-color: #fff;
-  height: 364px;
-  width: 700px;
   cursor: crosshair;
 }
 
@@ -1016,4 +1014,86 @@ input[type="checkbox"]:focus + .reverse-input-tick {
   float: left;
   margin-top: -52px;
   margin-left: 1220px;
+}
+
+/****TRANSFORMATION***/
+.transformation { 
+  margin-top: 0px;
+}
+
+.transformation-left-side {
+  margin-top: 200px;
+}
+
+.transformation-right-side {
+  margin-top: 85px;
+}
+
+.radio-point {
+  -webkit-transform: scale(3);
+  position: absolute;
+}
+
+.radio-point:hover {
+  cursor: pointer;
+}
+
+.radio-point:after {
+  width: 15px;
+  height: 15px;
+  border-radius: 15px;
+  top: -2px;
+  left: -1px;
+  position: relative;
+  background-color: #817E7E;
+  content: '';
+  display: inline-block;
+  visibility: visible;
+  border: 2px solid white;
+}
+
+.radio-point:checked:after {
+  width: 15px;
+  height: 15px;
+  border-radius: 15px;
+  top: -2px;
+  left: -1px;
+  position: relative;
+  background-color: #CB2E81;
+  content: '';
+  display: inline-block;
+  visibility: visible;
+  border: 2px solid white;
+}
+
+.parallelogram-point-1 {
+  margin-top: 100px;
+  margin-left: -298px;
+}
+
+.parallelogram-point-2 {
+  margin-top: 100px;
+  margin-left: -10px;
+}
+
+.parallelogram-point-3 {
+  margin-top: 240px;
+  margin-left: -352px;
+}
+
+.parallelogram-point-4 {
+  margin-top: 240px;
+  margin-left: -68px;
+}
+
+.transformation button {
+  width: 30rem;
+}
+
+.transformation-canvas {
+  margin-top: 70px;
+}
+
+.question-panel-transformation {
+  margin-right: 150px;
 }
