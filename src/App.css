@@ -1030,7 +1030,7 @@ input[type="checkbox"]:focus + .reverse-input-tick {
 }
 
 .radio-point {
-  -webkit-transform: scale(3);
+  -webkit-transform: scale(4);
   position: absolute;
 }
 
@@ -1064,6 +1064,11 @@ input[type="checkbox"]:focus + .reverse-input-tick {
   display: inline-block;
   visibility: visible;
   border: 2px solid white;
+}
+
+.radio-point:hover::after {
+  background-color: #962b7c;
+  transition: 0.3s;
 }
 
 .parallelogram-point-1 {
@@ -1109,8 +1114,9 @@ input[type="checkbox"]:focus + .reverse-input-tick {
 
 .transformation-input-h2 {
   color: #817E7E;
-  font-size: 55px;
-  margin-top: -4px;
+  font-size: 45px;
+  font-weight: 500;
+  margin-top: 4px;
 }
 
 .input-point-1-h2-margin {
@@ -1123,30 +1129,58 @@ input[type="checkbox"]:focus + .reverse-input-tick {
 
 .transformation-position {
   position: absolute;
-  width: 283px !important;
+  width: 310px !important;
   height: 74px !important;
 }
 
 .transformation-position-1 {
   margin-top: -350px !important;
-  margin-left: -230px;
+  margin-left: -350px;
 }
 
 .transformation-position-2 {
   margin-top: -350px !important;
-  margin-left: 400px;
+  margin-left: 500px;
 }
 
 .transformation-position-3 {
   margin-top: -70px !important;
-  margin-left: -400px;
+  margin-left: -460px;
 }
 
 .transformation-position-4 {
   margin-top: -70px !important;
-  margin-left: 250px;
+  margin-left: 370px;
 }
 
 .transformation .border-custom-line {
   border: solid 4px #817E7E;
+}
+
+/*Transformation panel*/
+.record-transformation-panel {
+  width: 300px;
+  height: 70px;
+  background-color: black;
+  position: absolute;
+  margin-top: 780px;
+  margin-left: 78px;
+}
+
+.mt-play-buttons {
+  margin-top: 10px;
+}
+
+.mt-play-buttons:hover {
+  color: #817E7E;
+  cursor: pointer;
+}
+
+.cursor-pointer-bulb {
+  color: rgb(241, 241, 40);
+}
+
+.cursor-pointer-bulb:hover {
+  cursor: pointer;
+  color: rgb(109, 109, 20);
 }
