@@ -6,6 +6,7 @@ import questionRobot from '../assets/img/question_robot.png';
 import questionRobotActive from '../assets/img/question_robot_active.png';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faPlayCircle, faStopCircle, faPauseCircle, faLightbulb } from "@fortawesome/free-solid-svg-icons"
+import { Magnet } from 'react-bootstrap-icons';
 
 export const Transformation = () => {
     const canvas = useRef(null);
@@ -18,78 +19,99 @@ export const Transformation = () => {
     const [reduction, SetReduction] = useState('');
     const [isActiveDrawing, setIsActiveDrawing] = useState(false);
     const [interval, setCurrInterval] = useState(null);
+    const [currZoom, setCurrZoom] = useState(6)
+    const [isDragging, setIsDragging] = useState(false);
+    const [startX, setStartX] = useState(0);
+    const [startY, setStartY] = useState(0);
+    const [dx, setDx] = useState(0);
+    const [dy, setDy] = useState(0);
 
     useEffect(() => {
-        drawCoordinateSystem();
+        drawCoordinateSystem(dx, dy);
     }, []);
 
     useEffect(() => {
-        if(isActiveDrawing) {
-            canvas.current.getContext("2d").fillRect(0, 0, canvas.current.width, canvas.current.height);
-            drawParallelogram();
-        }
-    }, [point1, point2, point3, point4]);
+        drawCoordinateSystem(dx, dy);
+    }, [dx, dy, currZoom]);
 
     const drawCoordinateSystem = () => {
+        let coordinatesWidth = 5 * currZoom;
         let context = canvas.current.getContext("2d");
+
         context.clearRect(0, 0, canvas.current.width, canvas.current.height);
         context.fillStyle = "white";
         context.fillRect(0, 0, canvas.current.width, canvas.current.height);
-        for(var i = 5; i <= canvas.current.width; i += 35) {
-            context.moveTo(i, 5);
-            context.lineTo(i, canvas.current.height - 5);
 
-            context.moveTo(5, i);
-            context.lineTo(canvas.current.width - 5, i);
+        context.beginPath();
+        for(var i = coordinatesWidth; i <= canvas.current.width + 2 * coordinatesWidth; i += coordinatesWidth) {
+            context.moveTo(i + dx % coordinatesWidth - coordinatesWidth, 0 - coordinatesWidth);
+            context.lineTo(i + dx % coordinatesWidth - coordinatesWidth, canvas.current.height + coordinatesWidth);
+
+            context.moveTo(0 - coordinatesWidth, i + dy % coordinatesWidth - coordinatesWidth);
+            context.lineTo(canvas.current.width + coordinatesWidth, i + dy % coordinatesWidth - coordinatesWidth);
 
             context.strokeStyle = "#f0f0f0";
             context.stroke();
         }
 
-        context.beginPath();
-        context.moveTo(0, canvas.current.height / 2);
-        context.lineTo(canvas.current.width, canvas.current.height / 2);
+        let linesAmount = parseInt(canvas.current.width / coordinatesWidth);
+        let movedLines = parseInt(dx / coordinatesWidth);
 
-        context.moveTo(canvas.current.width / 2, 0);
-        context.lineTo(canvas.current.width / 2, canvas.current.height);
+        // if(Math.abs(dx) <= canvas.current.width / 2) {
+        // } 
+        context.beginPath();
+        context.moveTo(0, canvas.current.height / 2 + dy);
+        context.lineTo(canvas.current.width, canvas.current.height / 2 + dy);
+
+        context.moveTo(canvas.current.width / 2 - 15 + dx, 25);
+        context.lineTo(canvas.current.width / 2 + dx, 0);
+        context.lineTo(canvas.current.width / 2 + 15 + dx, 25);
+
+        context.font = "30px serif";
+        context.fillStyle = "#CB2E81";
         context.strokeStyle = "#CB2E81";
+        context.fillText('y', canvas.current.width / 2 - 30 + dx, 20);
         context.stroke();
+        
+        // if(Math.abs(dy) <= canvas.current.height / 2) {
+        // }
 
         context.beginPath();
-        context.moveTo(canvas.current.width / 2 - 15, 25);
-        context.lineTo(canvas.current.width / 2, 0);
-        context.lineTo(canvas.current.width / 2 + 15, 25);
+        context.moveTo(canvas.current.width / 2 + dx, 0);
+        context.lineTo(canvas.current.width / 2 + dx, canvas.current.height);
 
-        context.moveTo(canvas.current.width - 25, canvas.current.height / 2 - 15);
-        context.lineTo(canvas.current.width, canvas.current.height / 2);
-        context.lineTo(canvas.current.width - 25, canvas.current.height / 2 + 15);
+        context.moveTo(canvas.current.width - 25, canvas.current.height / 2 - 15 + dy);
+        context.lineTo(canvas.current.width, canvas.current.height / 2 + dy);
+        context.lineTo(canvas.current.width - 25, canvas.current.height / 2 + 15 + dy);
+
+        context.font = "30px serif";
+        context.fillStyle = "#CB2E81";
         context.strokeStyle = "#CB2E81";
+        context.fillText('x', canvas.current.width - 15, canvas.current.height / 2 + 30 + dy);
         context.stroke();
 
         context.beginPath();
         context.font = "20px serif"
         context.fillStyle = "black";
-        for(var i = 5; i <= canvas.current.width; i += 35) {
-            if(i < canvas.current.width - 35) {
-                context.moveTo(i, canvas.current.height / 2 - 3);
-                context.lineTo(i, canvas.current.height / 2 + 3);
+        console.log(linesAmount - movedLines)
+        for(var i = coordinatesWidth, counter = linesAmount - movedLines; i <= canvas.current.width; i += coordinatesWidth) {
+            if(i < canvas.current.width - coordinatesWidth) {
+                context.moveTo(i + dx, canvas.current.height / 2 - 4 + dy);
+                context.lineTo(i + dx, canvas.current.height / 2 + 4 + dy);
                 if(i !== canvas.current.width / 2)
-                    context.fillText((i - 5) / 35 - 11, i - 5, canvas.current.height / 2 + 24);
+                    context.fillText(counter, i - 5 + dx, canvas.current.height / 2 + 24 + dy);
                 else 
-                    context.fillText(0, i + 3, canvas.current.height / 2 + 24);
+                    context.fillText(0, i + 3 + dx, canvas.current.height / 2 + 24 + dy);
             }
 
             if(i !== 5) {
-                context.moveTo(canvas.current.width / 2 - 3, i);
-                context.lineTo(canvas.current.width / 2 + 3, i);
+                context.moveTo(canvas.current.width / 2 - 4 + dx, i + dy);
+                context.lineTo(canvas.current.width / 2 + 4 + dx, i + dy);
                 if(i !== canvas.current.width / 2)
-                    context.fillText(-(i - 5) / 35 + 11, canvas.current.width / 2 + 8, i + 5);
+                    context.fillText(-counter, canvas.current.width / 2 + 8 + dx, i + 5 + dy);
             }
+            counter++;
         }
-        context.font = "30px serif";
-        context.fillStyle = "#CB2E81";
-        context.fillText('y', canvas.current.width / 2 - 30, 20);
-        context.fillText('x', canvas.current.width - 15, canvas.current.height / 2 + 30);
         context.strokeStyle = "#CB2E81";
         context.stroke();
     }
@@ -136,8 +158,8 @@ export const Transformation = () => {
     const convertPointToRealCanvasPoint = (point) => {
         const currZoom = 35;
         return {
-            x: Number(point.x * currZoom + canvas.current.width / 2),
-            y: Number(-point.y * currZoom  + canvas.current.height / 2)
+            x: Number(point.x) * currZoom + canvas.current.width / 2,
+            y: -Number(point.y) * currZoom  + canvas.current.height / 2
         }
     }
 
@@ -159,42 +181,52 @@ export const Transformation = () => {
         const movePointName = 5;
         context.font = "20px serif";
         context.fillStyle = "#CB2E81";
-        context.fillText(`A(${point1.x};${point1.y})`, realPoints[0].x - movePointName * 10, realPoints[0].y - movePointName);
-        context.fillText(`B(${point2.x};${point2.y})`, realPoints[1].x + movePointName, realPoints[1].y - movePointName);
-        context.fillText(`C(${point3.x};${point3.y})`, realPoints[2].x - movePointName * 10, realPoints[2].y + movePointName * 5);
-        context.fillText(`D(${point4.x};${point4.y})`, realPoints[3].x + movePointName, realPoints[3].y + movePointName * 5);
-        console.log(point1, point2, point3, point4);
+        context.fillText(`A(${Number(point1.x.toFixed(2))};${Number(point1.y.toFixed(2))})`, realPoints[0].x - movePointName * 10, realPoints[0].y - movePointName);
+        context.fillText(`B(${Number(point2.x.toFixed(2))};${Number(point2.y.toFixed(2))})`, realPoints[1].x + movePointName, realPoints[1].y - movePointName);
+        context.fillText(`C(${Number(point3.x.toFixed(2))};${Number(point3.y.toFixed(2))})`, realPoints[2].x - movePointName * 10, realPoints[2].y + movePointName * 5);
+        context.fillText(`D(${Number(point4.x.toFixed(2))};${Number(point4.y.toFixed(2))})`, realPoints[3].x + movePointName, realPoints[3].y + movePointName * 5);
     }
 
     const permanentDrawingParallelogram = () => {
         let vectorFromCenterPoint = {
-            x: -(point1.x + point4.x) / 2,
-            y: -(point1.y + point4.y) / 2
+            x: -(Number(point1.x) + Number(point4.x)) / 2,
+            y: -(Number(point1.y) + Number(point4.y)) / 2
         };
         
-        SetPoint1({
-            x: point1.x + vectorFromCenterPoint.x,
-            y: point1.y + vectorFromCenterPoint.y
-        });
-        console.log(point1, {x : point1.x + vectorFromCenterPoint.x, y : point1.y + vectorFromCenterPoint.y});
-        SetPoint2({
-            x: point2.x + vectorFromCenterPoint.x,
-            y: point2.y + vectorFromCenterPoint.y
-        });
-        SetPoint3({
-            x: point3.x + vectorFromCenterPoint.x,
-            y: point3.y + vectorFromCenterPoint.y
-        });
-        SetPoint4({
-            x: point4.x + vectorFromCenterPoint.x,
-            y: point4.y + vectorFromCenterPoint.y
-        });
+        let reductionNumber = Number(reduction);
+        SetPoint1(point1 => ({
+            x: 1 / reductionNumber * (Number(point1.x) + vectorFromCenterPoint.x) - vectorFromCenterPoint.x,
+            y: 1 / reductionNumber * (Number(point1.y) + vectorFromCenterPoint.y) - vectorFromCenterPoint.y
+        }));
+        SetPoint2(point2 => ({
+            x: 1 / reductionNumber * (Number(point2.x) + vectorFromCenterPoint.x) - vectorFromCenterPoint.x,
+            y: 1 / reductionNumber * (Number(point2.y) + vectorFromCenterPoint.y) - vectorFromCenterPoint.y
+        }));
+        SetPoint3(point3 => ({
+            x: 1 / reductionNumber * (Number(point3.x) + vectorFromCenterPoint.x) - vectorFromCenterPoint.x,
+            y: 1 / reductionNumber * (Number(point3.y) + vectorFromCenterPoint.y) - vectorFromCenterPoint.y
+        }));
+        SetPoint4(point4 => ({
+            x: 1 / reductionNumber * (Number(point4.x) + vectorFromCenterPoint.x) - vectorFromCenterPoint.x,
+            y: 1 / reductionNumber * (Number(point4.y) + vectorFromCenterPoint.y) - vectorFromCenterPoint.y
+        }));
     }
+
+    useEffect(() => {
+        if([point1, point2, point3, point4].map((point, _) => {
+            if(point.x === '' || point.y === '')
+                return false;
+            return true;
+        }).some(boolVal => boolVal === false)) {
+            return;
+        }
+            drawParallelogram();
+    }, [point1, point2, point3, point4])
 
     const startDrawingParallelogram = () => {
         setCurrInterval(setInterval(() => {
             permanentDrawingParallelogram();
-        }, 2500));
+        }, 1500));
     }
 
     const stopDrawingParallelogram = () => {
@@ -204,10 +236,10 @@ export const Transformation = () => {
 
     const setDefaultCoordinates = () => {
         const defaultPoints = [
-            { x: 4, y: 3 },
-            { x: 9, y: 3 },
-            { x: 2, y: 1 },
-            { x: 7, y: 1 }
+            { x: -6, y: 10 },
+            { x: 9, y: 10 },
+            { x: -9, y: 2 },
+            { x: 6, y: 2 }
         ];
 
         defaultPoints.map((point, i) => {
@@ -218,6 +250,51 @@ export const Transformation = () => {
         SetPoint2(defaultPoints[1]);
         SetPoint3(defaultPoints[2]);
         SetPoint4(defaultPoints[3]);
+    }
+
+    const mouseDown = (event) => {
+        setStartX(parseInt(event.clientX));
+        setStartY(parseInt(event.clientY));
+        setIsDragging(true);
+        event.currentTarget.style.cursor = 'pointer';
+    } 
+
+    const mouseUp = (event) => {
+        if(!isDragging) 
+            return;
+        setIsDragging(false);
+        event.currentTarget.style.cursor = 'default';
+    }
+
+    const mouseOut = (event) => {
+        if(!isDragging)
+            return;
+        setIsDragging(false);
+        event.currentTarget.style.cursor = 'default';
+    }
+
+    const mouseMove = (event) => {
+        if(!isDragging)
+            return;
+        let mouseX = parseInt(event.clientX);
+        let mouseY = parseInt(event.clientY);
+        setStartX(mouseX);
+        setStartY(mouseY);
+        setDx(dx + mouseX - startX);
+        setDy(dy + mouseY - startY);
+    }
+
+    const zoom = (event) => {
+        const scrollValue = 1;
+        const maxZoom = 30;
+        const minZoom = 3;
+        if(event.deltaY < 0) {
+            if(currZoom < maxZoom)
+                setCurrZoom(currZoom + scrollValue);
+        } else { 
+            if(currZoom > minZoom)
+                setCurrZoom(currZoom - scrollValue);
+        }
     }
 
     return(
@@ -424,7 +501,7 @@ export const Transformation = () => {
                                         <Row className="justify-content-center">
                                             <span className='navbar-button navbar-button-slide home-button justify-content-center'>
                                                 <button className='calc-button' type="button" onClick={() => validateInputs()}>
-                                                    <span>Save ratio</span>
+                                                    <span>Save points</span>
                                                 </button>
                                             </span>
                                         </Row>
@@ -474,7 +551,12 @@ export const Transformation = () => {
                                     }
                                 </div>
 
-                                <canvas ref={canvas} width={'780xp'} height={'780px'} className="transformation-canvas">
+                                <canvas ref={canvas} width={'700xp'} height={'700px'} className="transformation-canvas"
+                                    onMouseDown={(event) => mouseDown(event)}
+                                    onMouseUp={(event) => mouseUp(event)}
+                                    onMouseOut={(event) => mouseOut(event)}
+                                    onMouseMove={(event) => mouseMove(event)}
+                                    onWheel={(event) => zoom(event)}>
                                 </canvas>
                             </div>
                         </Col>

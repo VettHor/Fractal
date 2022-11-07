@@ -1100,7 +1100,7 @@ input[type="checkbox"]:focus + .reverse-input-tick {
 }
 
 .question-panel-transformation {
-  margin-right: 150px;
+  margin-right: 195px;
 }
 
 .transformation-input {
@@ -1159,12 +1159,12 @@ input[type="checkbox"]:focus + .reverse-input-tick {
 
 /*Transformation panel*/
 .record-transformation-panel {
-  width: 300px;
+  width: 700px;
   height: 70px;
-  background-color: black;
+  background-color: #CB2E81;
   position: absolute;
   margin-top: 780px;
-  margin-left: 78px;
+  margin-left: 117px;
 }
 
 .mt-play-buttons {
