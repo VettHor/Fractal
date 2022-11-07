@@ -27,11 +27,11 @@ export const Transformation = () => {
     const [dy, setDy] = useState(0);
 
     useEffect(() => {
-        drawCoordinateSystem(dx, dy);
+        drawCoordinateSystem();
     }, []);
 
     useEffect(() => {
-        drawCoordinateSystem(dx, dy);
+        drawCoordinateSystem();
     }, [dx, dy, currZoom]);
 
     const drawCoordinateSystem = () => {
@@ -55,61 +55,93 @@ export const Transformation = () => {
         }
 
         let linesAmount = parseInt(canvas.current.width / coordinatesWidth);
-        let movedLines = parseInt(dx / coordinatesWidth);
-
+        let movedLinesX = parseInt(dx / coordinatesWidth);
+        let movedLinesY = parseInt(dy / coordinatesWidth);
         // if(Math.abs(dx) <= canvas.current.width / 2) {
         // } 
-        context.beginPath();
-        context.moveTo(0, canvas.current.height / 2 + dy);
-        context.lineTo(canvas.current.width, canvas.current.height / 2 + dy);
+        // context.beginPath();
+        // context.moveTo(0, canvas.current.height / 2 + dy);
+        // context.lineTo(canvas.current.width, canvas.current.height / 2 + dy);
 
-        context.moveTo(canvas.current.width / 2 - 15 + dx, 25);
-        context.lineTo(canvas.current.width / 2 + dx, 0);
-        context.lineTo(canvas.current.width / 2 + 15 + dx, 25);
+        // context.moveTo(canvas.current.width / 2 - 15 + dx, 25);
+        // context.lineTo(canvas.current.width / 2 + dx, 0);
+        // context.lineTo(canvas.current.width / 2 + 15 + dx, 25);
+
+        // context.font = "30px serif";
+        // context.fillStyle = "#CB2E81";
+        // context.strokeStyle = "#CB2E81";
+        // context.fillText('y', canvas.current.width / 2 - 30 + dx, 20);
+        // context.stroke();
+
+        let XAxys_Y = parseInt(linesAmount / 2) * coordinatesWidth + dy;
+        context.beginPath();
+        context.moveTo(0, XAxys_Y);
+        context.lineTo(canvas.current.width, XAxys_Y);
+
+        context.moveTo(canvas.current.width - 25, XAxys_Y - 15);
+        context.lineTo(canvas.current.width, XAxys_Y);
+        context.lineTo(canvas.current.width - 25, XAxys_Y + 15);
 
         context.font = "30px serif";
         context.fillStyle = "#CB2E81";
         context.strokeStyle = "#CB2E81";
-        context.fillText('y', canvas.current.width / 2 - 30 + dx, 20);
+        context.fillText('x', canvas.current.width - 15, XAxys_Y + 30);
         context.stroke();
         
         // if(Math.abs(dy) <= canvas.current.height / 2) {
         // }
 
+        let YAxys_X = parseInt(linesAmount / 2) * coordinatesWidth + dx;
         context.beginPath();
-        context.moveTo(canvas.current.width / 2 + dx, 0);
-        context.lineTo(canvas.current.width / 2 + dx, canvas.current.height);
+        context.moveTo(YAxys_X, 0);
+        context.lineTo(YAxys_X, canvas.current.height);
 
-        context.moveTo(canvas.current.width - 25, canvas.current.height / 2 - 15 + dy);
-        context.lineTo(canvas.current.width, canvas.current.height / 2 + dy);
-        context.lineTo(canvas.current.width - 25, canvas.current.height / 2 + 15 + dy);
+        
+        context.moveTo(YAxys_X - 15, 25);
+        context.lineTo(YAxys_X, 0);
+        context.lineTo(YAxys_X + 15, 25);
 
         context.font = "30px serif";
         context.fillStyle = "#CB2E81";
         context.strokeStyle = "#CB2E81";
-        context.fillText('x', canvas.current.width - 15, canvas.current.height / 2 + 30 + dy);
+        context.fillText('y', YAxys_X - 30, 20);
         context.stroke();
 
         context.beginPath();
         context.font = "20px serif"
         context.fillStyle = "black";
-        console.log(linesAmount - movedLines)
-        for(var i = coordinatesWidth, counter = linesAmount - movedLines; i <= canvas.current.width; i += coordinatesWidth) {
-            if(i < canvas.current.width - coordinatesWidth) {
-                context.moveTo(i + dx, canvas.current.height / 2 - 4 + dy);
-                context.lineTo(i + dx, canvas.current.height / 2 + 4 + dy);
-                if(i !== canvas.current.width / 2)
-                    context.fillText(counter, i - 5 + dx, canvas.current.height / 2 + 24 + dy);
-                else 
-                    context.fillText(0, i + 3 + dx, canvas.current.height / 2 + 24 + dy);
-            }
+        console.log(linesAmount - movedLinesX)
+        // for(var i = coordinatesWidth, counter = linesAmount - movedLinesX; i <= canvas.current.width; i += coordinatesWidth) {
+        //     if(i < canvas.current.width - coordinatesWidth) {
+        //         context.moveTo(i + dx, XAxys_Y - 4);
+        //         context.lineTo(i + dx, XAxys_Y + 4);
+        //         if(i !== canvas.current.width / 2)
+        //             context.fillText(counter, i - 5 + dx, XAxys_Y + 24);
+        //         else 
+        //             context.fillText(0, i + 3 + dx, XAxys_Y + 24);
+        //     }
 
-            if(i !== 5) {
-                context.moveTo(canvas.current.width / 2 - 4 + dx, i + dy);
-                context.lineTo(canvas.current.width / 2 + 4 + dx, i + dy);
-                if(i !== canvas.current.width / 2)
-                    context.fillText(-counter, canvas.current.width / 2 + 8 + dx, i + 5 + dy);
-            }
+        //     if(i !== 5) {
+        //         context.moveTo(YAxys_X - 4, i + dy);
+        //         context.lineTo(YAxys_X + 4, i + dy);
+        //         if(i !== canvas.current.width / 2)
+        //             context.fillText(-counter, YAxys_X + 8, i + 5 + dy);
+        //     }
+        //     counter++;
+        // }
+        for(var i = 1, counter = linesAmount - movedLinesX; i < linesAmount; i++) {
+            context.moveTo(i * coordinatesWidth + dx, XAxys_Y - 4);
+            context.lineTo(i * coordinatesWidth + dx, XAxys_Y + 4);
+            if(i * coordinatesWidth + dx !== YAxys_X)
+                context.fillText(counter, i * coordinatesWidth - 5 + dx, XAxys_Y + 24);
+            else 
+                context.fillText(0, i * coordinatesWidth + 3 + dx, XAxys_Y + 24);
+
+
+            context.moveTo(YAxys_X - 4, i * coordinatesWidth + dy);
+            context.lineTo(YAxys_X + 4, i * coordinatesWidth + dy);
+            if(i * coordinatesWidth + dy !== XAxys_Y)
+                context.fillText(-counter, YAxys_X + 8, i * coordinatesWidth + 5 + dy);
             counter++;
         }
         context.strokeStyle = "#CB2E81";
