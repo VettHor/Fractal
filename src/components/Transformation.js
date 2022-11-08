@@ -6,7 +6,6 @@ import questionRobot from '../assets/img/question_robot.png';
 import questionRobotActive from '../assets/img/question_robot_active.png';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faPlayCircle, faStopCircle, faPauseCircle, faLightbulb } from "@fortawesome/free-solid-svg-icons"
-import { Magnet } from 'react-bootstrap-icons';
 
 export const Transformation = () => {
     const canvas = useRef(null);
@@ -19,12 +18,19 @@ export const Transformation = () => {
     const [reduction, SetReduction] = useState('');
     const [isActiveDrawing, setIsActiveDrawing] = useState(false);
     const [interval, setCurrInterval] = useState(null);
-    const [currZoom, setCurrZoom] = useState(6)
+
+    const zoomDefaultValue = 6;
+    const [currZoom, setCurrZoom] = useState(zoomDefaultValue);
     const [isDragging, setIsDragging] = useState(false);
     const [startX, setStartX] = useState(0);
     const [startY, setStartY] = useState(0);
     const [dx, setDx] = useState(0);
     const [dy, setDy] = useState(0);
+    // const [originX, setOriginX] = useState(0);
+    // const [originY, setOriginY] = useState(0);
+    const [arePointsSet, setArePointsSet] = useState(false);
+    let originX = 0;
+    let originY = 0;
 
     useEffect(() => {
         drawCoordinateSystem();
@@ -32,7 +38,10 @@ export const Transformation = () => {
 
     useEffect(() => {
         drawCoordinateSystem();
+        if(arePointsSet)
+            drawParallelogram();
     }, [dx, dy, currZoom]);
+
 
     const drawCoordinateSystem = () => {
         let coordinatesWidth = 5 * currZoom;
@@ -57,23 +66,10 @@ export const Transformation = () => {
         let linesAmount = parseInt(canvas.current.width / coordinatesWidth);
         let movedLinesX = parseInt(dx / coordinatesWidth);
         let movedLinesY = parseInt(dy / coordinatesWidth);
-        // if(Math.abs(dx) <= canvas.current.width / 2) {
-        // } 
-        // context.beginPath();
-        // context.moveTo(0, canvas.current.height / 2 + dy);
-        // context.lineTo(canvas.current.width, canvas.current.height / 2 + dy);
 
-        // context.moveTo(canvas.current.width / 2 - 15 + dx, 25);
-        // context.lineTo(canvas.current.width / 2 + dx, 0);
-        // context.lineTo(canvas.current.width / 2 + 15 + dx, 25);
-
-        // context.font = "30px serif";
-        // context.fillStyle = "#CB2E81";
-        // context.strokeStyle = "#CB2E81";
-        // context.fillText('y', canvas.current.width / 2 - 30 + dx, 20);
-        // context.stroke();
 
         let XAxys_Y = parseInt(linesAmount / 2) * coordinatesWidth + dy;
+        originY  = XAxys_Y;
         context.beginPath();
         context.moveTo(0, XAxys_Y);
         context.lineTo(canvas.current.width, XAxys_Y);
@@ -87,11 +83,10 @@ export const Transformation = () => {
         context.strokeStyle = "#CB2E81";
         context.fillText('x', canvas.current.width - 15, XAxys_Y + 30);
         context.stroke();
-        
-        // if(Math.abs(dy) <= canvas.current.height / 2) {
-        // }
+
 
         let YAxys_X = parseInt(linesAmount / 2) * coordinatesWidth + dx;
+        originX = YAxys_X;
         context.beginPath();
         context.moveTo(YAxys_X, 0);
         context.lineTo(YAxys_X, canvas.current.height);
@@ -108,42 +103,38 @@ export const Transformation = () => {
         context.stroke();
 
         context.beginPath();
-        context.font = "20px serif"
+        context.font = `${currZoom < zoomDefaultValue ? 5 + currZoom * 2 : 20}px serif`;
         context.fillStyle = "black";
-        console.log(linesAmount - movedLinesX)
-        // for(var i = coordinatesWidth, counter = linesAmount - movedLinesX; i <= canvas.current.width; i += coordinatesWidth) {
-        //     if(i < canvas.current.width - coordinatesWidth) {
-        //         context.moveTo(i + dx, XAxys_Y - 4);
-        //         context.lineTo(i + dx, XAxys_Y + 4);
-        //         if(i !== canvas.current.width / 2)
-        //             context.fillText(counter, i - 5 + dx, XAxys_Y + 24);
-        //         else 
-        //             context.fillText(0, i + 3 + dx, XAxys_Y + 24);
-        //     }
 
-        //     if(i !== 5) {
-        //         context.moveTo(YAxys_X - 4, i + dy);
-        //         context.lineTo(YAxys_X + 4, i + dy);
-        //         if(i !== canvas.current.width / 2)
-        //             context.fillText(-counter, YAxys_X + 8, i + 5 + dy);
-        //     }
-        //     counter++;
-        // }
-        for(var i = 1, counter = linesAmount - movedLinesX; i < linesAmount; i++) {
-            context.moveTo(i * coordinatesWidth + dx, XAxys_Y - 4);
-            context.lineTo(i * coordinatesWidth + dx, XAxys_Y + 4);
-            if(i * coordinatesWidth + dx !== YAxys_X)
-                context.fillText(counter, i * coordinatesWidth - 5 + dx, XAxys_Y + 24);
+        let zoomDiffNumberLineX = currZoom < zoomDefaultValue ? 6 + currZoom * 2 : 24;
+        let zoomDiffNumberLineY = 8;
+        for(var i = YAxys_X, counterLeftX = 0; i >= 0; i -= coordinatesWidth, counterLeftX--) {
+            context.moveTo(i, XAxys_Y - 4);
+            context.lineTo(i, XAxys_Y + 4);
+            if(i !== YAxys_X)
+                context.fillText(counterLeftX, i - 5, XAxys_Y + zoomDiffNumberLineX);
             else 
-                context.fillText(0, i * coordinatesWidth + 3 + dx, XAxys_Y + 24);
-
-
-            context.moveTo(YAxys_X - 4, i * coordinatesWidth + dy);
-            context.lineTo(YAxys_X + 4, i * coordinatesWidth + dy);
-            if(i * coordinatesWidth + dy !== XAxys_Y)
-                context.fillText(-counter, YAxys_X + 8, i * coordinatesWidth + 5 + dy);
-            counter++;
+            context.fillText(counterLeftX, i + 5, XAxys_Y + zoomDiffNumberLineX);
         }
+
+        for(var i = YAxys_X + coordinatesWidth, counterRightX = 1; i <= canvas.current.width - coordinatesWidth; i += coordinatesWidth, counterRightX++) {
+            context.moveTo(i, XAxys_Y - 4);
+            context.lineTo(i, XAxys_Y + 4);
+            context.fillText(counterRightX, i - 5, XAxys_Y + zoomDiffNumberLineX);
+        }
+
+        for(var i = XAxys_Y - coordinatesWidth, counterTopY = 1; i >= coordinatesWidth; i -= coordinatesWidth, counterTopY++) {
+            context.moveTo(YAxys_X - 4, i);
+            context.lineTo(YAxys_X + 4, i);
+            context.fillText(counterTopY, YAxys_X + zoomDiffNumberLineY, i + 5);
+        }
+
+        for(var i = XAxys_Y + coordinatesWidth, counterBottomY = -1; i <= canvas.current.height; i += coordinatesWidth, counterBottomY--) {
+            context.moveTo(YAxys_X - 4, i);
+            context.lineTo(YAxys_X + 4, i);
+            context.fillText(counterBottomY, YAxys_X + zoomDiffNumberLineY, i + 5);
+        }
+
         context.strokeStyle = "#CB2E81";
         context.stroke();
     }
@@ -188,10 +179,10 @@ export const Transformation = () => {
     }
 
     const convertPointToRealCanvasPoint = (point) => {
-        const currZoom = 35;
+        let coordinatesWidth = 5 * currZoom;
         return {
-            x: Number(point.x) * currZoom + canvas.current.width / 2,
-            y: -Number(point.y) * currZoom  + canvas.current.height / 2
+            x: Number(point.x) * coordinatesWidth + originX,
+            y: -Number(point.y) * coordinatesWidth + originY
         }
     }
 
@@ -267,6 +258,7 @@ export const Transformation = () => {
     }
 
     const setDefaultCoordinates = () => {
+        setArePointsSet(true);
         const defaultPoints = [
             { x: -6, y: 10 },
             { x: 9, y: 10 },
@@ -312,8 +304,8 @@ export const Transformation = () => {
         let mouseY = parseInt(event.clientY);
         setStartX(mouseX);
         setStartY(mouseY);
-        setDx(dx + mouseX - startX);
-        setDy(dy + mouseY - startY);
+        setDx(dx => (dx + mouseX - startX));
+        setDy(dy => (dy + mouseY - startY));
     }
 
     const zoom = (event) => {
@@ -322,10 +314,10 @@ export const Transformation = () => {
         const minZoom = 3;
         if(event.deltaY < 0) {
             if(currZoom < maxZoom)
-                setCurrZoom(currZoom + scrollValue);
+                setCurrZoom(currZoom => (currZoom + scrollValue));
         } else { 
             if(currZoom > minZoom)
-                setCurrZoom(currZoom - scrollValue);
+                setCurrZoom(currZoom => (currZoom - scrollValue));
         }
     }
 
@@ -588,7 +580,8 @@ export const Transformation = () => {
                                     onMouseUp={(event) => mouseUp(event)}
                                     onMouseOut={(event) => mouseOut(event)}
                                     onMouseMove={(event) => mouseMove(event)}
-                                    onWheel={(event) => zoom(event)}>
+                                    onWheel={(event) => zoom(event)}
+                                    >
                                 </canvas>
                             </div>
                         </Col>
