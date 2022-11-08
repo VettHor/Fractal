@@ -1030,7 +1030,7 @@ input[type="checkbox"]:focus + .reverse-input-tick {
 }
 
 .radio-point {
-  -webkit-transform: scale(4);
+  -webkit-transform: scale(4.3);
   position: absolute;
 }
 
@@ -1160,7 +1160,7 @@ input[type="checkbox"]:focus + .reverse-input-tick {
 /*Transformation panel*/
 .record-transformation-panel {
   width: 700px;
-  height: 70px;
+  height: 65px;
   background-color: #CB2E81;
   position: absolute;
   margin-top: 780px;
@@ -1168,7 +1168,7 @@ input[type="checkbox"]:focus + .reverse-input-tick {
 }
 
 .mt-play-buttons {
-  margin-top: 10px;
+  margin-top: 5px;
 }
 
 .mt-play-buttons:hover {
