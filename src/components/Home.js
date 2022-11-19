@@ -2,6 +2,7 @@ import { Container, Row, Col } from 'react-bootstrap';
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from 'react';
 import light_robot from '../assets/img/light_robot.png';
+import { ParticleBackground } from './ParticleBackground'
 
 export const Home = props => {
     const navigate = useNavigate();
@@ -38,6 +39,7 @@ export const Home = props => {
 
     return(
         <section className='banner' id="home">
+            <ParticleBackground/>
             <Container>
                 <Row className='align-items-center'>
                     <Col xs={12} md={6} xl={7}>

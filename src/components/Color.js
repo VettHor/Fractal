@@ -23,7 +23,7 @@ export const Color = () => {
         x: 0, 
         y: 0
     });
-    const [currColorSaturation, setCurrColorSaturation] = useState('Green');
+    const [currColorSaturation, setCurrColorSaturation] = useState('Red');
 
     useEffect(() => {
         let context1 = canvas1.current.getContext("2d");
@@ -419,7 +419,7 @@ export const Color = () => {
                                     onMouseOver={() => mouseOver()}
                                     onMouseOut={() => mouseOut()}
                                     onMouseMove={e => mouseMove('canvas-2', e)}
-                                    onClick={e => getPixel('canvas-2',e)}
+                                    onClick={e => getPixel('canvas-2', e)}
                                 />
                             <div className='border border-3 bordered-block m-auto'>
                                 <Row>
