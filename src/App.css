@@ -1219,6 +1219,13 @@ input[type="checkbox"]:focus + .reverse-input-tick {
   color: #CB2E81;
 }
 
+.header-topic {
+  margin-bottom: 2rem !important;
+  font-size: 3.2rem;
+  font-weight: 900;
+  color: #CB2E81;
+}
+
 .test-option {
   font-size: 2.8rem;
   font-weight: 900;
@@ -1228,6 +1235,104 @@ input[type="checkbox"]:focus + .reverse-input-tick {
   margin-top: 3rem;
 }
 
-.test .navbar-button button:hover {
+.test-blank-container {
+  position: absolute;
+  height: 72rem;
+  width: 100%;
+  margin-top: 5rem !important;
+  justify-content: center;
+  display: flex;
+}
+
+.test-blank {
+  width: 90%;
+  height: 95%;
+  background-color: rgba(255, 255, 255, 0.55);
+  border-radius: 2rem;
+  padding-top: 2rem;
+  padding-left: 4rem;
+  padding-right: 1rem;
+  text-align: start;
+}
+
+.header-question {
+  margin-top: 2rem;
+  margin-bottom: 2rem !important;
+  font-size: 2.6rem;
+  font-weight: 900;
+  color: #CB2E81;
+  text-decoration: .3rem underline;
+}
+
+.answers {
+  margin-top: -1rem;
+  font-size: 2.5rem;
+}
+
+.answers input[type=radio] {
+  margin-right: 2rem;
+  width: 3rem;
+  height: 3rem;
+  cursor: pointer;
+}
+
+.answers input[type=radio]:after {
+  width: 3rem;
+  height: 3rem;
+  border-radius: 2rem;
+
+  position: relative;
+  background-color: #d1d3d1;
+  content: '';
+  display: inline-block;
+  visibility: visible;
+  border: .3rem solid white;
+}
+
+.answers input[type=radio]:checked:after {
+  width: 3rem;
+  height: 3rem;
+  border-radius: 2rem;
+  position: relative;
+  background-color: #CB2E81;
+  content: '';
+  display: inline-block;
+  visibility: visible;
+  border: .3rem solid white;
+}
+
+.right-gif-align {
+  padding-left: 30rem !important;
+}
+
+.test .home-button button:hover {
   transform: scale(1.05);
+}
+
+.test .navbar-button-slide button::before {
+  content: "";
+  width: 0%;
+  height: 100%;
+  position: absolute;
+  background-color: rgb(203, 46, 129, 0.7);
+  left: 0;
+  top: 0;
+  z-index: -1;
+  transition: 0.3s ease-in-out;
+}
+
+.test .navbar-button-slide button:hover::before {
+	content: "";
+	width: 100%;
+	height: 100%;
+	position: absolute;
+}
+
+.transparent-button-active button:active::before {
+  background-color: #0206201a;
+}
+
+.transparent-button-active button:active {
+  background-color: #0206201a;
+  transition:  0s;
 }

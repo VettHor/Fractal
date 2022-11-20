@@ -45,7 +45,7 @@ export const Home = props => {
                     <Col xs={12} md={6} xl={7}>
                         <h1><span className='wrap'>{text + ' !'}</span></h1>
                         <p>Let's look into the world of<br/>graphics and interact with it!</p>
-                        <span className="navbar-button navbar-button-slide home-button">
+                        <span className="navbar-button navbar-button-slide home-button transparent-button-active">
                             <button onClick={() => { 
                                 props.changeLink('fractal');
                                 navigate('/fractal');
