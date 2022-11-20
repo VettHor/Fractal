@@ -87,7 +87,7 @@ nav.navbar .navbar-nav .nav-link.navbar-link {
 }
 
 nav.navbar a.navbar-brand {
-  margin-right: 8rem;
+  margin-right: 5rem;
 }
 
 nav.navbar .navbar-nav a.nav-link.navbar-link:hover,
@@ -1197,4 +1197,37 @@ input[type="checkbox"]:focus + .reverse-input-tick {
   color: #a8a3a3;
   font-size: 50px;
   margin-right: -20px;
+}
+
+
+/**********TEST*********/
+.test { 
+  padding: 85px 0px 0px 0px;
+}
+
+.test .home-button button {
+  width: 28.5rem;
+  height: 40rem;
+}
+
+
+.header-selector {
+  margin-top: 3rem !important;
+  margin-bottom: 2rem !important;
+  font-size: 4rem;
+  font-weight: 900;
+  color: #CB2E81;
+}
+
+.test-option {
+  font-size: 2.8rem;
+  font-weight: 900;
+}
+
+.test .home-button img {
+  margin-top: 3rem;
+}
+
+.test .navbar-button button:hover {
+  transform: scale(1.05);
 }

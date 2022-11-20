@@ -5,6 +5,7 @@ import { Home } from "./Home";
 import { Fractal } from "./Fractal";
 import { Color } from "./Color";
 import { Transformation } from "./Transformation";
+import { Test } from "./Test"
 import logo from '../assets/img/logo.png';
 
 export const NavBar = () => {
@@ -47,6 +48,7 @@ export const NavBar = () => {
                             <Nav.Link as={Link} to="/fractal" className={activeLink === 'fractal' ? 'active navbar-link' : 'navbar-link'} onClick={() => onUpdateActiveLink('fractal')}>Fractal</Nav.Link>
                             <Nav.Link as={Link} to="/color" className={activeLink === 'color' ? 'active navbar-link' : 'navbar-link'} onClick={() => onUpdateActiveLink('color')}>Color</Nav.Link>
                             <Nav.Link as={Link} to="/transformation" className={activeLink === 'transformation' ? 'active navbar-link' : 'navbar-link'} onClick={() => onUpdateActiveLink('transformation')}>Transformation</Nav.Link>
+                            <Nav.Link as={Link} to="/test" className={activeLink === 'test' ? 'active navbar-link' : 'navbar-link'} onClick={() => onUpdateActiveLink('test')}>Test</Nav.Link>
                         </Nav>
                     </Navbar.Collapse>
                 </Container>
@@ -57,6 +59,7 @@ export const NavBar = () => {
                     <Route path="/fractal" element={<Fractal/>}/>
                     <Route path="/color" element={<Color/>}/>
                     <Route path="/transformation" element={<Transformation/>}/>
+                    <Route path="/test" element={<Test/>}/>
                 </Routes>
             </div>
         </BrowserRouter>
