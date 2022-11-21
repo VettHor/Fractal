@@ -1205,11 +1205,10 @@ input[type="checkbox"]:focus + .reverse-input-tick {
   padding: 85px 0px 0px 0px;
 }
 
-.test .home-button button {
+.test-selection .home-button button {
   width: 28.5rem;
   height: 40rem;
 }
-
 
 .header-selector {
   margin-top: 3rem !important;
@@ -1231,22 +1230,21 @@ input[type="checkbox"]:focus + .reverse-input-tick {
   font-weight: 900;
 }
 
-.test .home-button img {
+.test-selection .home-button img {
   margin-top: 3rem;
 }
 
 .test-blank-container {
-  position: absolute;
-  height: 72rem;
+  height: 100%;
   width: 100%;
-  margin-top: 5rem !important;
+  margin-top: 5rem;
   justify-content: center;
   display: flex;
 }
 
 .test-blank {
   width: 90%;
-  height: 95%;
+  height: fit-content;
   background-color: rgba(255, 255, 255, 0.55);
   border-radius: 2rem;
   padding-top: 2rem;
@@ -1302,14 +1300,18 @@ input[type="checkbox"]:focus + .reverse-input-tick {
 }
 
 .right-gif-align {
-  padding-left: 30rem !important;
+  padding-right: 10rem !important;
 }
 
-.test .home-button button:hover {
+.right-koch-align {
+  padding-left: 10rem !important;
+}
+
+.test-selection .home-button button:hover {
   transform: scale(1.05);
 }
 
-.test .navbar-button-slide button::before {
+.test-selection .navbar-button-slide button::before {
   content: "";
   width: 0%;
   height: 100%;
@@ -1321,7 +1323,7 @@ input[type="checkbox"]:focus + .reverse-input-tick {
   transition: 0.3s ease-in-out;
 }
 
-.test .navbar-button-slide button:hover::before {
+.test-selection .navbar-button-slide button:hover::before {
 	content: "";
 	width: 100%;
 	height: 100%;
@@ -1334,5 +1336,43 @@ input[type="checkbox"]:focus + .reverse-input-tick {
 
 .transparent-button-active button:active {
   background-color: #0206201a;
-  transition:  0s;
+  transition: 0s;
+}
+
+.koch-answers {
+  margin-top: 2.5rem;
+}
+
+.finish-button {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 3rem;
+}
+
+.finish-button button {
+  width: 40rem;
+}
+
+.finish-div {
+  margin-top: 2rem !important;
+}
+
+.back-button {
+  left: 5.5%;
+  float: left;
+  margin-bottom: 2rem;
+}
+
+.back-button button {
+  width: 20rem !important;
+  height: 5rem !important;
+}
+
+.back-button span {
+  font-size: 3rem;
+  line-height: 2.5rem;
+}
+
+.icon-back {
+  margin-top: -1.9rem !important;
 }
