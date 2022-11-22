@@ -12,17 +12,64 @@ import kochFinalImg from '../assets/img/koch_final.png'
 import arrowResult from '../assets/img/arrow_result.png'
 import kochBaseImg from '../assets/img/koch_base.png'
 import kochInternalImg from '../assets/img/koch_internal.png'
-import arrowBackImg from '../assets/img/arrow_back.png'
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faLeftLong } from "@fortawesome/free-solid-svg-icons"
 
+import Tippy from '@tippyjs/react';
+import 'tippy.js/dist/tippy.css'
+import 'tippy.js/animations/scale.css';
+
 export const Test = () => {
     const topics = ["Fractal", "Color", "Transformation", "Mixed"];
+    const rightFractalAnswers = ["in some sense similar", "Koch snowflake", "2", "Square", "Square"];
     const [topic, setTopic] = useState('');
+    const [isTestFinished, setIsTestFinished] = useState(false);
+    const [rightTestsAmount, setRightTestsAmount] = useState(0);
 
-    const doSmth = () => {
-        console.log('wor');
+    const checkAnswers = () => {
+        for(let i = 0; i < rightFractalAnswers.length; ++i) {
+            let selectedRadio = document.querySelector(`input[name="fractal-question-${i + 1}"]:checked`);
+            if(selectedRadio === null) {
+                setTimeout(() => {
+                    document.getElementsByName(`fractal-question-${i + 1}`)[0].reportValidity();
+                }, 800);
+                return false;
+            }
+        }
+        setRightTestsAmount(0);
+        for(let i = 0; i < rightFractalAnswers.length; ++i) {
+            let radios = document.getElementsByName(`fractal-question-${i + 1}`);
+            let selectedRadio = document.querySelector(`input[name="fractal-question-${i + 1}"]:checked`);
+            if(selectedRadio.value === rightFractalAnswers[i])
+                setRightTestsAmount(rightTestsAmount => rightTestsAmount + 1);
+            else 
+                selectedRadio.classList.add("wrong-answers");
+
+            for(let j = 0; j < radios.length; ++j) {
+                if(radios[j].value === rightFractalAnswers[i])
+                    radios[j].classList.add("right-answers");
+                radios[j].disabled = true;
+            }
+        }
+        return true;
+    }
+
+    const tryAgain = () => {
+        setRightTestsAmount(0);
+        for(let i = 0; i < rightFractalAnswers.length; ++i) {
+            let radios = document.getElementsByName(`fractal-question-${i + 1}`);
+            let selectedRadio = document.querySelector(`input[name="fractal-question-${i + 1}"]:checked`);
+            if(selectedRadio.value !== rightFractalAnswers[i]) 
+                selectedRadio.classList.remove("wrong-answers");
+
+            for(let j = 0; j < radios.length; ++j) {
+                if(radios[j].value === rightFractalAnswers[i])
+                    radios[j].classList.remove("right-answers");
+                radios[j].disabled = false;
+                radios[j].checked = false;
+            }
+        }
     }
 
     return(
@@ -67,25 +114,30 @@ export const Test = () => {
                             </span>
                             <h1 className='header-topic'>{topics[topics.indexOf(topic)]}</h1>
                         </div>
-                        <Form onSubmit={doSmth}>
+                        <Form>
                             { topic === 'Fractal' &&
                                 <Row>
                                     <div className='test-blank-container'>
                                         <div className='test-blank'>
-                                            <h2 className='header-question'>1. Fractal is a structure made up of parts . . .</h2>
+                                            { isTestFinished &&
+                                                <div className='text-center'>
+                                                    <h1 className='result-mark'>{rightTestsAmount} / {rightFractalAnswers.length} &nbsp;({rightTestsAmount / rightFractalAnswers.length * 100}%)</h1>
+                                                </div>
+                                            }
+                                            <h2 className='header-question'>1. Fractal is a structure made up of parts that are . . . to the whole</h2>
                                             <div className='answers'>
                                                 <Row>
                                                     <div className='d-flex align-items-center'>
-                                                        <input type="radio" name="fractal-question-1" value="1" required
-                                                        onInvalid={F => F.target.setCustomValidity('Enter User Name Here')} 
-                                                        onInput={F => F.target.setCustomValidity('')} />
-                                                        <label>that are in some sense similar to the whole</label>
+                                                        <input type="radio" name="fractal-question-1" value="in some sense similar" required
+                                                            onInvalid={e => e.target.setCustomValidity('Choose your answer')}
+                                                            onInput={e => e.target.setCustomValidity('')}/>
+                                                        <label>in some sense similar</label>
                                                     </div>
                                                 </Row>
                                                 <Row>
                                                     <div className='d-flex align-items-center'>
-                                                        <input type="radio" name="fractal-question-1" value="1"/>
-                                                        <label>that are completely dissimilar to the whole</label>
+                                                        <input type="radio" name="fractal-question-1" value="completely dissimilar"/>
+                                                        <label>completely dissimilar</label>
                                                     </div>
                                                 </Row>
                                             </div>
@@ -96,43 +148,45 @@ export const Test = () => {
                                                 <div className='answers'>
                                                     <Row>
                                                         <div className='d-flex align-items-center'>
-                                                            <input type="radio" name="fractal-question-1" value="1" required/>
+                                                            <input type="radio" name="fractal-question-2" value="Koch snowflake" required
+                                                                onInvalid={e => e.target.setCustomValidity('Choose your answer')}
+                                                                onInput={e => e.target.setCustomValidity('')}/>
                                                             <label>Koch snowflake</label>
                                                         </div>
                                                     </Row>
                                                     <Row>
                                                         <div className='d-flex align-items-center'>
-                                                            <input type="radio" name="fractal-question-1" value="1"/>
+                                                            <input type="radio" name="fractal-question-2" value="Serpinsky carpet"/>
                                                             <label>Serpinsky carpet</label>
                                                         </div>
                                                     </Row>
                                                     <Row>
                                                         <div className='d-flex align-items-center'>
-                                                            <input type="radio" name="fractal-question-1" value="1"/>
+                                                            <input type="radio" name="fractal-question-2" value="Julia set"/>
                                                             <label>Julia set</label>
                                                         </div>
                                                     </Row>
                                                     <Row>
                                                         <div className='d-flex align-items-center'>
-                                                            <input type="radio" name="fractal-question-1" value="1"/>
+                                                            <input type="radio" name="fractal-question-2" value="Mandelbrot set"/>
                                                             <label>Mandelbrot set</label>
                                                         </div>
                                                     </Row>
                                                     <Row>
                                                         <div className='d-flex align-items-center'>
-                                                            <input type="radio" name="fractal-question-1" value="1"/>
+                                                            <input type="radio" name="fractal-question-2" value="Newton"/>
                                                             <label>Newton</label>
                                                         </div>
                                                     </Row>
                                                     <Row>
                                                         <div className='d-flex align-items-center'>
-                                                            <input type="radio" name="fractal-question-1" value="1"/>
+                                                            <input type="radio" name="fractal-question-2" value="Barnsley fern"/>
                                                             <label>Barnsley fern</label>
                                                         </div>
                                                     </Row>
                                                     <Row>
                                                         <div className='d-flex align-items-center'>
-                                                            <input type="radio" name="fractal-question-1" value="1"/>
+                                                            <input type="radio" name="fractal-question-2" value="Cesaro"/>
                                                             <label>Cesaro</label>
                                                         </div>
                                                     </Row>
@@ -153,31 +207,33 @@ export const Test = () => {
                                                 <div className='answers koch-answers'>
                                                     <Row>
                                                         <div className='d-flex align-items-center'>
-                                                            <input type="radio" name="fractal-question-1" value="1" required/>
+                                                            <input type="radio" name="fractal-question-3" value="1" required 
+                                                                onInvalid={e => e.target.setCustomValidity('Choose your answer')}
+                                                                onInput={e => e.target.setCustomValidity('')}/>
                                                             <label>1</label>
                                                         </div>
                                                     </Row>
                                                     <Row>
                                                         <div className='d-flex align-items-center'>
-                                                            <input type="radio" name="fractal-question-1" value="1"/>
+                                                            <input type="radio" name="fractal-question-3" value="2"/>
                                                             <label>2</label>
                                                         </div>
                                                     </Row>
                                                     <Row>
                                                         <div className='d-flex align-items-center'>
-                                                            <input type="radio" name="fractal-question-1" value="1"/>
+                                                            <input type="radio" name="fractal-question-3" value="3"/>
                                                             <label>3</label>
                                                         </div>
                                                     </Row>
                                                     <Row>
                                                         <div className='d-flex align-items-center'>
-                                                            <input type="radio" name="fractal-question-1" value="1"/>
+                                                            <input type="radio" name="fractal-question-3" value="4"/>
                                                             <label>4</label>
                                                         </div>
                                                     </Row>
                                                     <Row>
                                                         <div className='d-flex align-items-center'>
-                                                            <input type="radio" name="fractal-question-1" value="1"/>
+                                                            <input type="radio" name="fractal-question-3" value="5"/>
                                                             <label>5</label>
                                                         </div>
                                                     </Row>
@@ -194,31 +250,33 @@ export const Test = () => {
                                                 <div className='answers koch-answers'>
                                                     <Row>
                                                         <div className='d-flex align-items-center'>
-                                                            <input type="radio" name="fractal-question-1" value="1" required/>
+                                                            <input type="radio" name="fractal-question-4" value="Parallelogram" required 
+                                                                onInvalid={e => e.target.setCustomValidity('Choose your answer')}
+                                                                onInput={e => e.target.setCustomValidity('')}/>
                                                             <label>Parallelogram</label>
                                                         </div>
                                                     </Row>
                                                     <Row>
                                                         <div className='d-flex align-items-center'>
-                                                            <input type="radio" name="fractal-question-1" value="1"/>
+                                                            <input type="radio" name="fractal-question-4" value="Pentagon"/>
                                                             <label>Pentagon</label>
                                                         </div>
                                                     </Row>
                                                     <Row>
                                                         <div className='d-flex align-items-center'>
-                                                            <input type="radio" name="fractal-question-1" value="1"/>
+                                                            <input type="radio" name="fractal-question-4" value="Circle"/>
                                                             <label>Circle</label>
                                                         </div>
                                                     </Row>
                                                     <Row>
                                                         <div className='d-flex align-items-center'>
-                                                            <input type="radio" name="fractal-question-1" value="1"/>
+                                                            <input type="radio" name="fractal-question-4" value="Triangle"/>
                                                             <label>Triangle</label>
                                                         </div>
                                                     </Row>
                                                     <Row>
                                                         <div className='d-flex align-items-center'>
-                                                            <input type="radio" name="fractal-question-1" value="1"/>
+                                                            <input type="radio" name="fractal-question-4" value="Square"/>
                                                             <label>Square</label>
                                                         </div>
                                                     </Row>
@@ -233,31 +291,33 @@ export const Test = () => {
                                                 <div className='answers koch-answers'>
                                                     <Row>
                                                         <div className='d-flex align-items-center'>
-                                                            <input type="radio" name="fractal-question-1" value="1" required/>
+                                                            <input type="radio" name="fractal-question-5" value="Parallelogram" required 
+                                                                onInvalid={e => e.target.setCustomValidity('Choose your answer')}
+                                                                onInput={e => e.target.setCustomValidity('')}/>
                                                             <label>Parallelogram</label>
                                                         </div>
                                                     </Row>
                                                     <Row>
                                                         <div className='d-flex align-items-center'>
-                                                            <input type="radio" name="fractal-question-1" value="1"/>
+                                                            <input type="radio" name="fractal-question-5" value="Pentagon"/>
                                                             <label>Pentagon</label>
                                                         </div>
                                                     </Row>
                                                     <Row>
                                                         <div className='d-flex align-items-center'>
-                                                            <input type="radio" name="fractal-question-1" value="1"/>
+                                                            <input type="radio" name="fractal-question-5" value="Circle"/>
                                                             <label>Circle</label>
                                                         </div>
                                                     </Row>
                                                     <Row>
                                                         <div className='d-flex align-items-center'>
-                                                            <input type="radio" name="fractal-question-1" value="1"/>
+                                                            <input type="radio" name="fractal-question-5" value="Triangle"/>
                                                             <label>Triangle</label>
                                                         </div>
                                                     </Row>
                                                     <Row>
                                                         <div className='d-flex align-items-center'>
-                                                            <input type="radio" name="fractal-question-1" value="1"/>
+                                                            <input type="radio" name="fractal-question-5" value="Square"/>
                                                             <label>Square</label>
                                                         </div>
                                                     </Row>
@@ -274,11 +334,33 @@ export const Test = () => {
                             <Row>
                                 <div className='finish-div'>
                                     <span className="navbar-button navbar-button-slide home-button finish-button transparent-button-active">
-                                        <button type="submit" onClick={() => { 
-                            
-                                            }}>
-                                            <span className='test-option'>Finish</span>
-                                        </button>
+                                        {
+                                            isTestFinished ? 
+                                            <div className='d-flex gap-5'>
+                                                <button onClick={(event) => { 
+                                                        setIsTestFinished(false);
+                                                        tryAgain();
+                                                        window.scrollTo(0, 0);
+                                                    }}>
+                                                    <span className='test-option'>Try again</span>
+                                                </button> 
+                                                <button onClick={(event) => { 
+                                                        setIsTestFinished(false);
+                                                        setTopic('');
+                                                    }}>
+                                                    <span className='test-option'>Back to menu</span>
+                                                </button> 
+                                            </div>
+                                            :
+                                            <button onClick={(event) => { 
+                                                    if(checkAnswers()) {
+                                                        setIsTestFinished(true);
+                                                        window.scrollTo(0, 0);
+                                                    }
+                                                }}>
+                                                <span className='test-option'>Finish</span>
+                                            </button>
+                                        }
                                     </span>
                                 </div>
                             </Row>

@@ -1251,6 +1251,7 @@ input[type="checkbox"]:focus + .reverse-input-tick {
   padding-left: 4rem;
   padding-right: 1rem;
   text-align: start;
+  z-index: 1;
 }
 
 .header-question {
@@ -1375,4 +1376,35 @@ input[type="checkbox"]:focus + .reverse-input-tick {
 
 .icon-back {
   margin-top: -1.9rem !important;
+}
+
+.right-answers:after {
+  width: 3rem !important;
+  height: 3rem !important;
+  border-radius: 2rem !important;
+  position: relative !important;
+  background-color: #0c6b11 !important;
+  content: '' !important;
+  display: inline-block !important;
+  visibility: visible !important;
+  border: .3rem solid white !important;
+}
+
+.wrong-answers:after {
+  width: 3rem !important;
+  height: 3rem !important;
+  border-radius: 2rem !important;
+  position: relative !important;
+  background-color: #a80b0b !important;
+  content: '' !important;
+  display: inline-block !important;
+  visibility: visible !important;
+  border: .3rem solid white !important;
+}
+
+.result-mark {
+  font-size: 5rem;
+  margin-bottom: -1rem;
+  font-weight: 900;
+  color: #0c6b11;
 }
