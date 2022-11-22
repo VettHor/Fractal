@@ -1443,3 +1443,10 @@ input[type="checkbox"]:focus + .reverse-input-tick {
 .tippy-box[data-theme~='test-low'][data-placement^='bottom'] > .tippy-arrow::before {
   border-bottom-color: transparent;
 }
+
+
+.image-description {
+  font-size: 2.5rem;
+  color: #CB2E81;
+  font-weight: 900;
+}
