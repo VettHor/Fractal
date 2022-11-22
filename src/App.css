@@ -1408,3 +1408,38 @@ input[type="checkbox"]:focus + .reverse-input-tick {
   font-weight: 900;
   color: #0c6b11;
 }
+
+
+
+.tippy-box[data-theme~='test-high'] {
+  background-color: #0c6b11;
+  color: white;
+  border: .5rem solid #dedede;
+  border-radius: 5rem;
+}
+
+.tippy-box[data-theme~='test-high'][data-placement^='bottom'] > .tippy-arrow::before {
+  border-bottom-color: transparent;
+}
+
+.tippy-box[data-theme~='test-middle'] {
+  background-color: #ffb24a;
+  color: white;
+  border: .5rem solid #dedede;
+  border-radius: 5rem;
+}
+
+.tippy-box[data-theme~='test-middle'][data-placement^='bottom'] > .tippy-arrow::before {
+  border-bottom-color: transparent;
+}
+
+.tippy-box[data-theme~='test-low'] {
+  background-color: #a80b0b;
+  color: white;
+  border: .5rem solid #dedede;
+  border-radius: 5rem;
+}
+
+.tippy-box[data-theme~='test-low'][data-placement^='bottom'] > .tippy-arrow::before {
+  border-bottom-color: transparent;
+}

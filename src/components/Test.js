@@ -19,6 +19,7 @@ import { faLeftLong } from "@fortawesome/free-solid-svg-icons"
 import Tippy from '@tippyjs/react';
 import 'tippy.js/dist/tippy.css'
 import 'tippy.js/animations/scale.css';
+import robot from '../assets/img/light_robot.png'
 
 export const Test = () => {
     const topics = ["Fractal", "Color", "Transformation", "Mixed"];
@@ -26,6 +27,15 @@ export const Test = () => {
     const [topic, setTopic] = useState('');
     const [isTestFinished, setIsTestFinished] = useState(false);
     const [rightTestsAmount, setRightTestsAmount] = useState(0);
+
+
+    useEffect(() => {
+        if(isTestFinished) {
+            setTimeout(() => {
+                document.getElementById('result-mark').click();
+            }, 1000);
+        }
+    }, [isTestFinished]);
 
     const checkAnswers = () => {
         for(let i = 0; i < rightFractalAnswers.length; ++i) {
@@ -105,6 +115,7 @@ export const Test = () => {
                         <div className='d-flex align-items-center justify-content-center mt-4'>
                             <span className="navbar-button navbar-button-slide home-button back-button transparent-button-active position-absolute">
                                 <button onClick={() => { 
+                                        setIsTestFinished(false);
                                         setTopic('');
                                     }}>
                                     <div className='icon-back'>
@@ -121,7 +132,30 @@ export const Test = () => {
                                         <div className='test-blank'>
                                             { isTestFinished &&
                                                 <div className='text-center'>
-                                                    <h1 className='result-mark'>{rightTestsAmount} / {rightFractalAnswers.length} &nbsp;({rightTestsAmount / rightFractalAnswers.length * 100}%)</h1>
+                                                    <Tippy 
+                                                        trigger='click' 
+                                                        duration={500} 
+                                                        maxWidth={450} 
+                                                        placement='bottom' 
+                                                        animation='scale' 
+                                                        theme={`${rightTestsAmount / rightFractalAnswers.length < 0.3 ? 'test-low' :
+                                                                rightTestsAmount / rightFractalAnswers.length < 0.7 ? 'test-middle' : 'test-high'}`} 
+                                                        content={
+                                                            <div className='text-center'>
+                                                                <Row>
+                                                                    <span style={{fontSize: '3rem'}} className='mt-3'>
+                                                                        {`${rightTestsAmount / rightFractalAnswers.length < 0.3 ? 'You can do better!' :
+                                                                        rightTestsAmount / rightFractalAnswers.length < 0.7 ? 'Not bad! Try again!' : 'Good job!'}`}</span>
+                                                                </Row>
+                                                                <Row>
+                                                                    <img src={robot}></img>
+                                                                </Row>
+                                                            </div>}>
+                                                        <h1 id="result-mark" className='result-mark'
+                                                            style={{color: `${rightTestsAmount / rightFractalAnswers.length < 0.3 ? '#a80b0b' :
+                                                            rightTestsAmount / rightFractalAnswers.length < 0.7 ? '#ffb24a' : '#0c6b11'}`}}
+                                                        >{rightTestsAmount} / {rightFractalAnswers.length} &nbsp;({rightTestsAmount / rightFractalAnswers.length * 100}%)</h1>
+                                                    </Tippy>
                                                 </div>
                                             }
                                             <h2 className='header-question'>1. Fractal is a structure made up of parts that are . . . to the whole</h2>
