@@ -62,9 +62,7 @@ export const Transformation = () => {
     const [arePointsSet, setArePointsSet] = useState(false);
     let originX = 0;
     let originY = 0;
-
     let isStopped = false;
-
     const [parallelogramPoints, setParallelogramPoints] = useState([]);
 
     useEffect(() => {
@@ -74,7 +72,7 @@ export const Transformation = () => {
     }, [dx, dy, currZoom, parallelogramPoints]);
     
     const exportParallelogram = () => {
-        var anchor = document.createElement("a");
+        let anchor = document.createElement("a");
         anchor.href = document.getElementById("transformation-canvas").toDataURL("image/png");
         anchor.download = "Parallelogram.png";
         anchor.click();
@@ -354,7 +352,7 @@ export const Transformation = () => {
 
     const startDrawingParallelogram = async function () {
         let startingPoints = parallelogramPoints;
-        let angleValue = isActiveCounterclockwise ? -90 : 90;
+        let angleValue = isActiveCounterclockwise ? -angle : angle;
         let scalingValue = isActiveReduction ? 1 / figureScale : figureScale;
 
         const iterationsAmount = 1000;
@@ -652,7 +650,7 @@ export const Transformation = () => {
                                                                 name="angle"
                                                                 pattern="[1-9][0-9]*"
                                                                 onChange={(event) => {
-                                                                    SetAngle(event.target.value);
+                                                                    SetAngle(Number(event.target.value));
                                                                 }}
                                                                 onInvalid={e => e.target.setCustomValidity('Введіть чисельник дробу, що задає відношення поділу')}
                                                                 onInput={e => e.target.setCustomValidity('')}

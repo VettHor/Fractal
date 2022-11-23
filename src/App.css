@@ -1292,10 +1292,12 @@ input[type="checkbox"]:focus + .reverse-input-tick {
 .header-question {
   margin-top: 2rem;
   margin-bottom: 2rem !important;
+  margin-right: 2rem;
   font-size: 2.6rem;
   font-weight: 900;
   color: #CB2E81;
   text-decoration: .3rem underline;
+  text-align: justify;
 }
 
 .answers {
@@ -1341,6 +1343,14 @@ input[type="checkbox"]:focus + .reverse-input-tick {
 
 .right-koch-align {
   padding-left: 10rem !important;
+}
+
+.right-parallelogram-align {
+  padding-left: 7rem !important;
+}
+
+.right-parallelogram-scaled-align {
+  padding-right: 3rem !important;
 }
 
 .test-selection .home-button button:hover {
