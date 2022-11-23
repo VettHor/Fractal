@@ -5,7 +5,7 @@ import parallelogram from '../assets/img/parallelogram.png';
 import questionRobot from '../assets/img/question_robot.png';
 import questionRobotActive from '../assets/img/question_robot_active.png';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
-import { faPlayCircle, faStopCircle, faPauseCircle, faLightbulb } from "@fortawesome/free-solid-svg-icons"
+import { faPlayCircle, faDownload, faLightbulb } from "@fortawesome/free-solid-svg-icons"
 import reductionImage from '../assets/img/reduction.png'
 import reductionActiveImage from '../assets/img/reduction_active.png'
 import increasingImage from '../assets/img/increasing.png'
@@ -51,7 +51,6 @@ export const Transformation = () => {
 
     const [figureScale, setFigureScale] = useState('');
     const [angle, SetAngle] = useState('');
-    const [isActiveDrawing, setIsActiveDrawing] = useState(false);
 
     const zoomDefaultValue = 6;
     const [currZoom, setCurrZoom] = useState(zoomDefaultValue);
@@ -64,7 +63,7 @@ export const Transformation = () => {
     let originX = 0;
     let originY = 0;
 
-    let isPausedOrStoped = false;
+    let isStopped = false;
 
     const [parallelogramPoints, setParallelogramPoints] = useState([]);
 
@@ -73,6 +72,13 @@ export const Transformation = () => {
         if(arePointsSet) 
             drawParallelogram();
     }, [dx, dy, currZoom, parallelogramPoints]);
+    
+    const exportParallelogram = () => {
+        var anchor = document.createElement("a");
+        anchor.href = document.getElementById("transformation-canvas").toDataURL("image/png");
+        anchor.download = "Parallelogram.png";
+        anchor.click();
+    }
 
     const drawCoordinateSystem = () => {
         let coordinatesWidth = 5 * currZoom;
@@ -219,6 +225,70 @@ export const Transformation = () => {
         ]);
     }
 
+    const disableAll = () => {
+        document.getElementsByClassName('record-transformation-panel')[0].disabled = true;
+        document.getElementsByClassName('record-transformation-panel')[0].classList.add('opacity-50');
+        document.getElementsByClassName('mt-play-buttons')[0].classList.add('mt-play-buttons-disabled');
+        document.getElementsByClassName('mt-play-buttons')[0].classList.remove('mt-play-buttons');
+        
+        document.getElementsByClassName('cursor-pointer-bulb')[0].classList.add('opacity-50');
+        document.getElementsByClassName('cursor-pointer-bulb')[0].classList.add('cursor-pointer-bulb-disabled');
+        document.getElementsByClassName('cursor-pointer-bulb')[0].classList.remove('cursor-pointer-bulb');
+
+        document.getElementById('save-button').disabled = true;
+        document.getElementById('save-button').classList.add('opacity-50');
+        let allInputButtons = document.getElementsByClassName("figure-button");
+        let allSelectors = document.getElementsByClassName("input-selector");
+        for(let i = 0; i < allInputButtons.length; ++i) {
+            allInputButtons[i].disabled = true;
+            allInputButtons[i].classList.add('opacity-50');
+            allSelectors[i].disabled = true;
+        }
+
+        let pointRadios = document.getElementsByName("parallelogramPoint");
+        for(let i = 0; i < pointRadios.length; ++i)
+            pointRadios[i].disabled = true;
+
+        for(let i = 0; i < 4; ++i) {
+            document.getElementById(`p${i + 1}X`).disabled = true;
+            document.getElementById(`p${i + 1}Y`).disabled = true;
+        }
+        document.getElementById('angle').disabled = true;
+        document.getElementById('reduction').disabled = true;
+    }
+
+    const enableAll = () => {
+        document.getElementsByClassName('record-transformation-panel')[0].disabled = false;
+        document.getElementsByClassName('record-transformation-panel')[0].classList.remove('opacity-50');
+        document.getElementsByClassName('mt-play-buttons-disabled')[0].classList.add('mt-play-buttons');
+        document.getElementsByClassName('mt-play-buttons')[0].classList.remove('mt-play-buttons-disabled');
+                
+        document.getElementsByClassName('cursor-pointer-bulb-disabled')[0].classList.remove('opacity-50');
+        document.getElementsByClassName('cursor-pointer-bulb-disabled')[0].classList.add('cursor-pointer-bulb');
+        document.getElementsByClassName('cursor-pointer-bulb')[0].classList.remove('cursor-pointer-bulb-disabled');
+
+        document.getElementById('save-button').disabled = false;
+        document.getElementById('save-button').classList.remove('opacity-50');
+        let allInputButtons = document.getElementsByClassName("figure-button");
+        let allSelectors = document.getElementsByClassName("input-selector");
+        for(let i = 0; i < allInputButtons.length; ++i) {
+            allInputButtons[i].disabled = false;
+            allInputButtons[i].classList.remove('opacity-50');
+            allSelectors[i].disabled = false;
+        }
+
+        let pointRadios = document.getElementsByName("parallelogramPoint");
+        for(let i = 0; i < pointRadios.length; ++i)
+            pointRadios[i].disabled = false;
+
+        for(let i = 0; i < 4; ++i) {
+            document.getElementById(`p${i + 1}X`).disabled = false;
+            document.getElementById(`p${i + 1}Y`).disabled = false;
+        }
+        document.getElementById('angle').disabled = false;
+        document.getElementById('reduction').disabled = false;
+    }
+
     const convertPointToRealCanvasPoint = (point) => {
         let coordinatesWidth = 5 * currZoom;
         return [
@@ -293,6 +363,12 @@ export const Transformation = () => {
         let rotatingPoint = [[x1, y1], [x2, y2], [x3, y3], [x4, y4]][document.querySelector('input[name="parallelogramPoint"]:checked').value];
 
         for(let i = 0, iterationsScale = 1, iterationsAngle = 0; i < iterationsAmount; ++i, iterationsScale += scaleStep, iterationsAngle += angleStep) {
+            if(isStopped) {
+                setParallelogramPoints(startingPoints);
+                isStopped = false;
+                return;
+            }
+            console.log(isStopped);
             if(i === iterationsAmount - 1) 
                 iterationsScale = scalingValue;
             setParallelogramPoints(transform(startingPoints, rotatingPoint, iterationsAngle, iterationsScale));
@@ -300,26 +376,16 @@ export const Transformation = () => {
         }
         await new Promise(r => setTimeout(r, 1500));
         for(let i = 0, iterationsScale = scalingValue, iterationsAngle = angleValue; i < iterationsAmount; ++i, iterationsScale -= scaleStep, iterationsAngle -= angleStep) {
+            if(isStopped) {
+                setParallelogramPoints(startingPoints);
+                isStopped = false;
+                return;
+            }
             setParallelogramPoints(transform(startingPoints, rotatingPoint, iterationsAngle, iterationsScale));
             await new Promise(obj => setTimeout(obj, 3));
         }
         setParallelogramPoints(startingPoints);
-        setIsActiveDrawing(false);
-    }
-
-    useEffect(() => {
-        if([[x1, y1], [x2, y2], [x3, y3], [x4, y4]].map((point, _) => {
-            if(point[0] === '' || point[1] === '')
-                return false;
-            return true;
-        }).some(boolVal => boolVal === false)) {
-            return;
-        }
-            //drawParallelogram();
-    }, [x1, y1, x2, y2, x3, y3, x4, y4]);
-
-    const stopDrawingParallelogram = () => {
-
+        enableAll();
     }
 
     const setDefaultCoordinates = () => {
@@ -562,7 +628,7 @@ export const Transformation = () => {
 
                                     <Row className="justify-content-center mt-5">
                                         <Col>
-                                            <span className={`navbar-button justify-content-center ${isActiveCounterclockwise ? "fractal-dotted-button" : "navbar-button-slide"}`}>
+                                            <span className={`input-selector navbar-button justify-content-center ${isActiveCounterclockwise ? "fractal-dotted-button" : "navbar-button-slide"}`}>
                                                 <div className={isActiveCounterclockwise ? "gradient" : ""}>
                                                     <button className='figure-button' onClick={(event) => {
                                                             event.preventDefault();
@@ -582,8 +648,8 @@ export const Transformation = () => {
                                                                 className="transformation-input fs-3 rounded-0 dotted-input-transformation text-center mt-3"
                                                                 placeholder='0'
                                                                 type="number"
-                                                                id='reduction'
-                                                                name="reduction"
+                                                                id='angle'
+                                                                name="angle"
                                                                 pattern="[1-9][0-9]*"
                                                                 onChange={(event) => {
                                                                     SetAngle(event.target.value);
@@ -599,7 +665,7 @@ export const Transformation = () => {
                                             </div>
                                         </Col>
                                         <Col>
-                                            <span className={`navbar-button justify-content-center ${isActiveCounterclockwise ? "navbar-button-slide" : "fractal-dotted-button"}`}>
+                                            <span className={`input-selector navbar-button justify-content-center ${isActiveCounterclockwise ? "navbar-button-slide" : "fractal-dotted-button"}`}>
                                                 <div className={isActiveCounterclockwise ? "" : "gradient"}>
                                                     <button className='figure-button' onClick={(event) => {
                                                             event.preventDefault();
@@ -616,7 +682,7 @@ export const Transformation = () => {
 
                                     <Row className="justify-content-center mt-4">
                                         <Col>
-                                            <span className={`navbar-button justify-content-center ${isActiveReduction ? "fractal-dotted-button" : "navbar-button-slide"}`}>
+                                            <span className={`input-selector navbar-button justify-content-center ${isActiveReduction ? "fractal-dotted-button" : "navbar-button-slide"}`}>
                                                 <div className={isActiveReduction ? "gradient" : ""}>
                                                     <button className='figure-button' onClick={(event) => {
                                                             event.preventDefault();
@@ -641,7 +707,7 @@ export const Transformation = () => {
                                                             onChange={(event) => {
                                                                 setFigureScale(Number(event.target.value));
                                                             }}
-                                                            onInvalid={e => e.target.setCustomValidity('Введіть значення, що задаватиме масштабування')}
+                                                            onInvalid={e => e.target.setCustomValidity('Enter scaling value')}
                                                             onInput={e => e.target.setCustomValidity('')}
                                                             required
                                                         />
@@ -650,7 +716,7 @@ export const Transformation = () => {
                                             </div>
                                         </Col>
                                         <Col>
-                                            <span className={`navbar-button justify-content-center ${isActiveReduction ? "navbar-button-slide" : "fractal-dotted-button"}`}>
+                                            <span className={`input-selector navbar-button justify-content-center ${isActiveReduction ? "navbar-button-slide" : "fractal-dotted-button"}`}>
                                                 <div className={isActiveReduction ? "" : "gradient"}>
                                                     <button className='figure-button' onClick={(event) => {
                                                             event.preventDefault();
@@ -666,9 +732,8 @@ export const Transformation = () => {
                                     <Form.Group className="mt-4">
                                         <Row className="justify-content-center">
                                             <span className='navbar-button navbar-button-slide home-button justify-content-center'>
-                                                <button className='calc-button' type="button" onClick={() => {
+                                                <button id='save-button' className='calc-button' type="button" onClick={() => {
                                                         validateInputs();
-                                                        setIsActiveDrawing(false);
                                                     }}>
                                                     <span>Save points</span>
                                                 </button>
@@ -696,29 +761,22 @@ export const Transformation = () => {
                                     </div>
                                 </div>   
 
+                                <div className='export-div export-parallelogram'>
+                                    <span className='navbar-button navbar-button-slide home-button'>
+                                        <button type='submit' onClick={() => exportParallelogram()}><FontAwesomeIcon icon={faDownload} size="2x"/></button>
+                                    </span>
+                                </div>  
+
                                 <div className='record-transformation-panel justify-content-center text-center border border-white border-3'>
-                                    { isActiveDrawing ?
-                                        <div>
-                                            <FontAwesomeIcon icon={faStopCircle} size="3x" className='mt-play-buttons' 
-                                                onClick={() => {
-                                                    setIsActiveDrawing(false);
-                                                    isPausedOrStoped = true;
-                                                    stopDrawingParallelogram();
-                                                }}
-                                            /> 
-                                        </div> :
-                                        <div>
-                                            <FontAwesomeIcon icon={faPlayCircle} size="3x" className='mt-play-buttons' 
-                                                onClick={() => {
-                                                    setIsActiveDrawing(true);
-                                                    startDrawingParallelogram();
-                                                }}
-                                            />
-                                        </div>
-                                    }
+                                    <FontAwesomeIcon icon={faPlayCircle} size="3x" className='mt-play-buttons' 
+                                        onClick={() => {
+                                            disableAll();
+                                            startDrawingParallelogram();
+                                        }}
+                                    />
                                 </div>
 
-                                <canvas ref={canvas} width={'700xp'} height={'700px'} className="transformation-canvas"
+                                <canvas id='transformation-canvas' ref={canvas} width={'700xp'} height={'700px'} className="transformation-canvas"
                                     onMouseDown={(event) => mouseDown(event)}
                                     onMouseUp={(event) => mouseUp(event)}
                                     onMouseOut={(event) => mouseOut(event)}

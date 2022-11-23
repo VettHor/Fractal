@@ -1,7 +1,7 @@
 import { Container, Row, Col, Form } from 'react-bootstrap';
 import { useState } from 'react';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
-import { faInfoCircle } from "@fortawesome/free-solid-svg-icons"
+import { faInfoCircle, faDownload } from "@fortawesome/free-solid-svg-icons"
 import triangle from '../assets/img/triangle.png';
 import triangleActive from '../assets/img/triangle_active.png';
 import rectangle from '../assets/img/rectangle.png';
@@ -226,7 +226,7 @@ export const Fractal = () => {
                                 denumerator={currDenumerator}/>
                             <div className='export-div'>
                                 <span className='navbar-button navbar-button-slide home-button export-span justify-content-center'>
-                                    <button type='submit' className='export-button' onClick={() => exportFractal()}><span>Export</span></button>
+                                    <button type='submit' className='export-button' onClick={() => exportFractal()}><FontAwesomeIcon icon={faDownload} size="2x"/></button>
                                 </span>
                             </div>
                         </Col>

@@ -134,12 +134,13 @@ span.navbar-button {
   transition: 0.3s ease-in-out;
 }
 
-.navbar-button-slide button:hover::before {
+.navbar-button-slide button:hover:not([disabled])::before {
 	content: "";
 	width: 100%;
 	height: 100%;
 	position: absolute;
 }
+
 
 nav.navbar .navbar-toggler:active,
 nav.navbar .navbar-toggler:focus {
@@ -339,6 +340,12 @@ nav.navbar {
   background-position: 0 0, 0 100%, 0 0, 100% 0;
   animation: linearGradientMove 2.5s infinite linear;
 }
+
+@keyframes linearGradientMove {
+  100% {
+      background-position: 30px 0, -30px 100%, 0 -30px, 100% 30px;
+  }
+} 
 
 @keyframes linearGradientMove {
   100% {
@@ -1067,9 +1074,17 @@ input[type="checkbox"]:focus + .reverse-input-tick {
   border: 2px solid white;
 }
 
-.radio-point:hover::after {
+.radio-point:hover:not([disabled])::after {
   background-color: #962b7c;
   transition: 0.3s;
+}
+
+.radio-point:disabled {
+  cursor: default;
+}
+
+.radio-point:disabled:checked:after {
+  background-color: #962b7c;
 }
 
 .parallelogram-point-1 {
@@ -1098,6 +1113,7 @@ input[type="checkbox"]:focus + .reverse-input-tick {
 
 .transformation-canvas {
   margin-top: 70px;
+  z-index: 99999;
 }
 
 .question-panel-transformation {
@@ -1177,6 +1193,15 @@ input[type="checkbox"]:focus + .reverse-input-tick {
   cursor: pointer;
 }
 
+
+.mt-play-buttons-disabled {
+  margin-top: 5px;
+}
+
+.mt-play-buttons-disabled:hover {
+  cursor: default;
+}
+
 .cursor-pointer-bulb {
   position: absolute;
   margin-left: 20px;
@@ -1186,6 +1211,16 @@ input[type="checkbox"]:focus + .reverse-input-tick {
 .cursor-pointer-bulb:hover {
   cursor: pointer;
   color: rgb(109, 109, 20);
+}
+
+.cursor-pointer-bulb-disabled {
+  position: absolute;
+  margin-left: 20px;
+  color: rgb(241, 241, 40);
+}
+
+.cursor-pointer-bulb-disabled:hover {
+  cursor: default;
 }
 
 .transformation .figure-button {
@@ -1450,3 +1485,14 @@ input[type="checkbox"]:focus + .reverse-input-tick {
   color: #CB2E81;
   font-weight: 900;
 }
+
+.export-parallelogram {
+  position: absolute;
+  margin-left: 7.4rem;
+}
+
+.export-parallelogram button {
+  width: 8rem;
+  height: 4.45rem;
+}
+
