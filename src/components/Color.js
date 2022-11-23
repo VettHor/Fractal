@@ -96,7 +96,8 @@ export const Color = () => {
         img.onload = function() {
             drawImageScaled(img, context1);
             drawImageScaled(img, context2);
-            setSaturation();
+            setColorSliderValue(0);
+            setColorSliderValueV(0);
         }
     }
 

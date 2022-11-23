@@ -26,12 +26,11 @@ export const KochCurve = ({basicFigure, internalFigure, isReverse, numerator, de
 
     useEffect(() => {
         basicFigure === 'square' ? setStartingPointsTriangle(defaultPointsTriangle) : setStartingPointsSquare(defaultPointsSquare);
-        drawFractal(currIteration);
-    }, [basicFigure])
+    }, [basicFigure]);
 
     useEffect(() => {
         drawFractal(currIteration);
-    }, [internalFigure, isReverse, numerator, denumerator])
+    }, [startingPointsTriangle, startingPointsSquare, internalFigure, isReverse, numerator, denumerator]);
     
     const koch = (a, b, limit) => {
         let [dx, dy] = [b.x - a.x, b.y - a.y]
@@ -195,7 +194,6 @@ export const KochCurve = ({basicFigure, internalFigure, isReverse, numerator, de
             p3: { x: startingPointsSquare.p3.x + dx, y: startingPointsSquare.p3.y + dy },
             p4: { x: startingPointsSquare.p4.x + dx, y: startingPointsSquare.p4.y + dy }
         })
-        drawFractal(currIteration);
     }
 
     const zoom = (event) => {
@@ -223,7 +221,6 @@ export const KochCurve = ({basicFigure, internalFigure, isReverse, numerator, de
                 p4: { x: startingPointsSquare.p4.x / scrollValue, y: startingPointsSquare.p4.y / scrollValue },
             });
         }
-        drawFractal(currIteration);
     }
 
     return(
