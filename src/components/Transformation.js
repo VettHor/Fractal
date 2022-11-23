@@ -6,6 +6,7 @@ import questionRobot from '../assets/img/question_robot.png';
 import questionRobotActive from '../assets/img/question_robot_active.png';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faPlayCircle, faDownload, faLightbulb } from "@fortawesome/free-solid-svg-icons"
+import { ErrorMessage } from './ErrorMessage';
 import reductionImage from '../assets/img/reduction.png'
 import reductionActiveImage from '../assets/img/reduction_active.png'
 import increasingImage from '../assets/img/increasing.png'
@@ -64,6 +65,8 @@ export const Transformation = () => {
     let originY = 0;
     let isStopped = false;
     const [parallelogramPoints, setParallelogramPoints] = useState([]);
+    const [isFirstSaveClicked, setIsFirstSaveClicked] = useState(false);
+    const [isRaisedError, setIsRaisedError] = useState(false);
 
     useEffect(() => {
         drawCoordinateSystem();
@@ -201,10 +204,13 @@ export const Transformation = () => {
             document.getElementById('reduction').reportValidity();
             return;
         }
-        // if(!isParallelogram()) {
-        //     alert("This is not parallelogram!")
-        //     return;
-        // }
+        
+        if(!(((Number(document.getElementById('p2Y').value) - Number(document.getElementById('p1Y').value)) / (Number(document.getElementById('p2X').value) - Number(document.getElementById('p1X').value)) === (Number(document.getElementById('p4Y').value) - Number(document.getElementById('p3Y').value)) / (Number(document.getElementById('p4X').value) - Number(document.getElementById('p3X').value))) &&
+            ((Number(document.getElementById('p1Y').value) - Number(document.getElementById('p3Y').value)) / (Number(document.getElementById('p1X').value) - Number(document.getElementById('p3X').value)) === (Number(document.getElementById('p2Y').value) - Number(document.getElementById('p4Y').value)) / (Number(document.getElementById('p2X').value) - Number(document.getElementById('p4X').value))))) {
+            setIsRaisedError(true);
+            return;
+        }
+
         setX1(Number(document.getElementById('p1X').value));
         setY1(Number(document.getElementById('p1Y').value));
         setX2(Number(document.getElementById('p2X').value));
@@ -332,8 +338,8 @@ export const Transformation = () => {
         let cos = Math.cos(radians);
         let sin = Math.sin(radians);
         let rotatingMatrix  = [
-            [cos, -sin, 0], 
-            [sin, cos, 0], 
+            [cos, sin, 0], 
+            [-sin, cos, 0], 
             [0, 0, 1] 
         ];
 
@@ -352,7 +358,7 @@ export const Transformation = () => {
 
     const startDrawingParallelogram = async function () {
         let startingPoints = parallelogramPoints;
-        let angleValue = isActiveCounterclockwise ? -angle : angle;
+        let angleValue = isActiveCounterclockwise ? angle : -angle;
         let scalingValue = isActiveReduction ? 1 / figureScale : figureScale;
 
         const iterationsAmount = 1000;
@@ -453,6 +459,12 @@ export const Transformation = () => {
                 text='The RGB color model is an additive color model in which the red, green, and blue primary colors of light are added together in various ways to reproduce a broad array of colors. The main purpose of the RGB color model is for the sensing, representation, and display of images in electronic systems.'
                 nextHeader='HSV'
                 nextText='HSV is closer to how humans perceive color. It has three components: hue, saturation, and value. This color space describes colors (hue or tint) in terms of their shade (saturation or amount of gray) and their brightness value. Moreover, the HSV color wheel also contributes to high-quality graphics.'
+            />
+            <ErrorMessage
+                open={isRaisedError}
+                onClose={() => setIsRaisedError(false)}
+                header='Wrong input!'
+                text='This is not parallelogram! Change coordinates!'
             />
             <section className='transformation' id="transformation">
                 <Container fluid className='justify-content-center text-center align-items-center'>
@@ -732,6 +744,12 @@ export const Transformation = () => {
                                             <span className='navbar-button navbar-button-slide home-button justify-content-center'>
                                                 <button id='save-button' className='calc-button' type="button" onClick={() => {
                                                         validateInputs();
+                                                        if(!isFirstSaveClicked) {
+                                                            document.getElementsByClassName('record-transformation-panel')[0].classList.remove('opacity-50');
+                                                            document.getElementsByClassName('mt-play-buttons-disabled')[0].classList.add('mt-play-buttons');
+                                                            document.getElementsByClassName('mt-play-buttons')[0].classList.remove('mt-play-buttons-disabled');
+                                                            setIsFirstSaveClicked(true);
+                                                        }
                                                     }}>
                                                     <span>Save points</span>
                                                 </button>
@@ -765,11 +783,12 @@ export const Transformation = () => {
                                     </span>
                                 </div>  
 
-                                <div className='record-transformation-panel justify-content-center text-center border border-white border-3'>
-                                    <FontAwesomeIcon icon={faPlayCircle} size="3x" className='mt-play-buttons' 
+                                <div className='record-transformation-panel justify-content-center text-center border border-white border-3 opacity-50'>
+                                    <FontAwesomeIcon icon={faPlayCircle} size="3x" className='mt-play-buttons-disabled' 
                                         onClick={() => {
                                             disableAll();
                                             startDrawingParallelogram();
+                                            
                                         }}
                                     />
                                 </div>

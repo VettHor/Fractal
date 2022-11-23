@@ -9,6 +9,7 @@ import rectangleActive from '../assets/img/rectangle_active.png';
 import questionRobot from '../assets/img/question_robot.png';
 import questionRobotActive from '../assets/img/question_robot_active.png';
 import { Popout } from './Popout'
+import { ErrorMessage } from './ErrorMessage';
 import Tippy from '@tippyjs/react';
 import 'tippy.js/dist/tippy.css'
 import 'tippy.js/animations/scale.css';
@@ -24,7 +25,10 @@ export const Fractal = () => {
     const [currNumerator, setCurrNumerator] = useState('');
     const [currDenumerator, setCurrDenumerator] = useState('');
     const [isCheckedbox, setIsCheckedbox] = useState(false);
-    
+
+
+    const [isRaisedError, setIsRaisedError] = useState(false);
+
     const setPopoutState = (state) => {
         setActivePopout(state)
         setOpenPopout(!state);
@@ -46,6 +50,10 @@ export const Fractal = () => {
             document.getElementById("denumerator").reportValidity();
             return;
         }
+        if(denumerator === '0') {
+            setIsRaisedError(true);
+            return;
+        }
         setCurrNumerator(numerator);
         setCurrDenumerator(denumerator);
     }
@@ -60,6 +68,12 @@ export const Fractal = () => {
                 nextHeader='Koch curve'
                 nextText='Koch curve is a fractal curve. The Koch snowflake starts with an equilateral triangle or square, then recursively altering each line segment as follows: divide the line segment into three segments and draw an equilateral triangle that has the middle segment from step 1 as its base and points outward.'
                 />
+            <ErrorMessage
+                open={isRaisedError}
+                onClose={() => setIsRaisedError(false)}
+                header='Wrong input!'
+                text='Dividing be zero! Change denumerator!'
+            />
             <section className='fractal' id="fractal">
                 <Container>
                     <Row> 
@@ -164,7 +178,7 @@ export const Fractal = () => {
                                                     name="numerator"
                                                     pattern="[1-9][0-9]*"
                                                     onChange={(event) => setNumerator(event.target.value)}
-                                                    onInvalid={e => e.target.setCustomValidity('Введіть чисельник дробу, що задає відношення поділу')}
+                                                    onInvalid={e => e.target.setCustomValidity('Enter numerator!')}
                                                     onInput={e => e.target.setCustomValidity('')}
                                                     required
                                                     >
@@ -183,7 +197,7 @@ export const Fractal = () => {
                                                     required
                                                     pattern="[1-9][0-9]*"
                                                     onChange={(event) => setDenumerator(event.target.value)}
-                                                    onInvalid={e => e.target.setCustomValidity('Введіть знаменник дробу, що задає відношення поділу')}
+                                                    onInvalid={e => e.target.setCustomValidity('Enter denumerator!')}
                                                     onInput={e => e.target.setCustomValidity('')}
                                                     >
                                                 </Form.Control>

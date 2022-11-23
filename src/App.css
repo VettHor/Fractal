@@ -449,6 +449,15 @@ hr.solid {
   margin-top: 3px;
 }
 
+.error-button {
+  font-size: 2rem;
+  margin-bottom: 6rem;
+  margin-right: 15rem;
+  height: 80px;
+  line-height: 2rem;
+  width: 220px;
+}
+
 *{
   -ms-overflow-style: none;
   }
@@ -530,6 +539,14 @@ hr.solid {
   font-weight: 800;
 }
 
+.error-h1 {
+  color: #a80b0b;
+  padding-top: 15px;
+  padding-left: 10rem;
+  font-size: 65px;
+  font-weight: 800;
+}
+
 .page-position {
   font-size: 55px;
   position: fixed;
@@ -549,6 +566,15 @@ hr.solid {
   color: white;
   font-size: 30px;
   font-weight: 700;
+}
+
+.error-text {
+  text-align: justify;
+  padding: 5px 40px 40px 40px;
+  color: white;
+  font-size: 30px;
+  font-weight: 700;
+  margin-left: 9rem;
 }
 
 .popout-robot {
@@ -1506,3 +1532,7 @@ input[type="checkbox"]:focus + .reverse-input-tick {
   height: 4.45rem;
 }
 
+.error-icon {
+  position: absolute;
+  margin-left: 2rem;
+}
