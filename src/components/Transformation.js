@@ -40,20 +40,18 @@ export const Transformation = () => {
     const canvas = useRef(null);
     const [isActivePopout, setActivePopout] = useState(false);
     const [openPopout, setOpenPopout] = useState(false);
-    const [point1, SetPoint1] = useState({x : '', y : ''});
-    const [point2, SetPoint2] = useState({x : '', y : ''});
-    const [point3, SetPoint3] = useState({x : '', y : ''});
-    const [point4, SetPoint4] = useState({x : '', y : ''});
-    const [startingPoint1, SetStartingPoint1] = useState({x : '', y : ''});
-    const [startingPoint2, SetStartingPoint2] = useState({x : '', y : ''});
-    const [startingPoint3, SetStartingPoint3] = useState({x : '', y : ''});
-    const [startingPoint4, SetStartingPoint4] = useState({x : '', y : ''});
-    const [reduction, SetReduction] = useState('');
+    const [x1, setX1] = useState(0);
+    const [y1, setY1] = useState(0);
+    const [x2, setX2] = useState(0);
+    const [y2, setY2] = useState(0);
+    const [x3, setX3] = useState(0);
+    const [y3, setY3] = useState(0);
+    const [x4, setX4] = useState(0);
+    const [y4, setY4] = useState(0);
+
+    const [figureScale, setFigureScale] = useState('');
     const [angle, SetAngle] = useState('');
-    let currReduction = 1;
-    let currAngle = 0;
     const [isActiveDrawing, setIsActiveDrawing] = useState(false);
-    let interval = null;
 
     const zoomDefaultValue = 6;
     const [currZoom, setCurrZoom] = useState(zoomDefaultValue);
@@ -68,16 +66,13 @@ export const Transformation = () => {
 
     let isPausedOrStoped = false;
 
-    useEffect(() => {
-        drawCoordinateSystem();
-    }, []);
+    const [parallelogramPoints, setParallelogramPoints] = useState([]);
 
     useEffect(() => {
         drawCoordinateSystem();
-        if(arePointsSet)
+        if(arePointsSet) 
             drawParallelogram();
-    }, [dx, dy, currZoom]);
-
+    }, [dx, dy, currZoom, parallelogramPoints]);
 
     const drawCoordinateSystem = () => {
         let coordinatesWidth = 5 * currZoom;
@@ -181,191 +176,163 @@ export const Transformation = () => {
     }
 
     const isParallelogram = () => {
-        if(((startingPoint2.y - startingPoint1.y) / (startingPoint2.x - startingPoint1.x) === (startingPoint4.y - startingPoint3.y) / (startingPoint4.x - startingPoint3.x)) &&
-            ((startingPoint1.y - startingPoint3.y) / (startingPoint1.x - startingPoint3.x) === (startingPoint2.y - startingPoint4.y) / (startingPoint2.x - startingPoint4.x)))
+        if(((y2 - y1) / (x2 - x1) === (y4 - y3) / (x4 - x3)) &&
+            ((y1 - y3) / (x1 - x3) === (y2 - y4) / (x2 - x4)))
             return true;
         return false;
     }
 
     const validateInputs = () => {
-        let isBreak = false;
-        [startingPoint1, startingPoint2, startingPoint3, startingPoint4].map((point, i) => {
-            if(isBreak) return;
-            if(point.x === '') {
+        for(let i = 0; i < 4; ++i) {
+            if(document.getElementById(`p${i + 1}X`).value === '') {
                 document.getElementById(`p${i + 1}X`).reportValidity();
-                isBreak = true;
                 return;
             }
-            if(point.y === '') {
-                isBreak = true;
+            if(document.getElementById(`p${i + 1}Y`).value === '') {
                 document.getElementById(`p${i + 1}Y`).reportValidity();
                 return;
             }
-        });
-        if(reduction === '') {
+        }
+        if(document.getElementById('reduction').value === '') {
             document.getElementById('reduction').reportValidity();
             return;
         }
+        // if(!isParallelogram()) {
+        //     alert("This is not parallelogram!")
+        //     return;
+        // }
+        setX1(Number(document.getElementById('p1X').value));
+        setY1(Number(document.getElementById('p1Y').value));
+        setX2(Number(document.getElementById('p2X').value));
+        setY2(Number(document.getElementById('p2Y').value));
+        setX3(Number(document.getElementById('p3X').value));
+        setY3(Number(document.getElementById('p3Y').value));
+        setX4(Number(document.getElementById('p4X').value));
+        setY4(Number(document.getElementById('p4Y').value));
 
-        if(!isParallelogram()) {
-            alert("This is not parallelogram!")
-            return;
-        }
-        SetPoint1(startingPoint1);
-        SetPoint2(startingPoint2);
-        SetPoint3(startingPoint3);
-        SetPoint4(startingPoint4);
-        drawParallelogram();
+        setArePointsSet(true);
+        setParallelogramPoints([
+            [Number(document.getElementById('p1X').value), Number(document.getElementById('p1Y').value), 1],
+            [Number(document.getElementById('p2X').value), Number(document.getElementById('p2Y').value), 1],
+            [Number(document.getElementById('p3X').value), Number(document.getElementById('p3Y').value), 1],
+            [Number(document.getElementById('p4X').value), Number(document.getElementById('p4Y').value), 1],
+        ]);
     }
 
     const convertPointToRealCanvasPoint = (point) => {
         let coordinatesWidth = 5 * currZoom;
-        return {
-            x: Number(point.x) * coordinatesWidth + originX,
-            y: -Number(point.y) * coordinatesWidth + originY
-        }
+        return [
+            point[0] * coordinatesWidth + originX,
+            -point[1] * coordinatesWidth + originY
+        ]
     }
 
     const drawParallelogram = () => {
-        drawCoordinateSystem();
-        let realPoints = [convertPointToRealCanvasPoint(point1), convertPointToRealCanvasPoint(point2), convertPointToRealCanvasPoint(point3), convertPointToRealCanvasPoint(point4)];
+        let realPoints = [convertPointToRealCanvasPoint(parallelogramPoints[0]), convertPointToRealCanvasPoint(parallelogramPoints[1]), 
+            convertPointToRealCanvasPoint(parallelogramPoints[2]), convertPointToRealCanvasPoint(parallelogramPoints[3])];
         let context = canvas.current.getContext("2d");
         context.beginPath();
-        context.moveTo(realPoints[0].x, realPoints[0].y);
-        context.lineTo(realPoints[1].x, realPoints[1].y);
-        context.lineTo(realPoints[3].x, realPoints[3].y);
-        context.lineTo(realPoints[2].x, realPoints[2].y);
-        context.lineTo(realPoints[0].x, realPoints[0].y);
+        context.moveTo(realPoints[0][0], realPoints[0][1]);
+        context.lineTo(realPoints[1][0], realPoints[1][1]);
+        context.lineTo(realPoints[3][0], realPoints[3][1]);
+        context.lineTo(realPoints[2][0], realPoints[2][1]);
+        context.lineTo(realPoints[0][0], realPoints[0][1]);
         context.strokeStyle = "#CB2E81";
         context.fillStyle = "rgb(203, 46, 129, 0.2)";
         context.stroke();
         context.fill();
-
         const movePointName = 5;
         context.font = "20px serif";
         context.fillStyle = "#CB2E81";
-        context.fillText(`A(${Number(Number(point1.x).toFixed(2))};${Number(Number(point1.y).toFixed(2))})`, realPoints[0].x - movePointName * 10, realPoints[0].y - movePointName);
-        context.fillText(`B(${Number(Number(point2.x).toFixed(2))};${Number(Number(point2.y).toFixed(2))})`, realPoints[1].x + movePointName, realPoints[1].y - movePointName);
-        context.fillText(`C(${Number(Number(point3.x).toFixed(2))};${Number(Number(point3.y).toFixed(2))})`, realPoints[2].x - movePointName * 10, realPoints[2].y + movePointName * 5);
-        context.fillText(`D(${Number(Number(point4.x).toFixed(2))};${Number(Number(point4.y).toFixed(2))})`, realPoints[3].x + movePointName, realPoints[3].y + movePointName * 5);
+        context.fillText(`A(${Number(Number(parallelogramPoints[0][0]).toFixed(2))};${Number(Number(parallelogramPoints[0][1]).toFixed(2))})`, realPoints[0][0] - movePointName * 10, realPoints[0][1] - movePointName);
+        context.fillText(`B(${Number(Number(parallelogramPoints[1][0]).toFixed(2))};${Number(Number(parallelogramPoints[1][1]).toFixed(2))})`, realPoints[1][0] + movePointName, realPoints[1][1] - movePointName);
+        context.fillText(`C(${Number(Number(parallelogramPoints[2][0]).toFixed(2))};${Number(Number(parallelogramPoints[2][1]).toFixed(2))})`, realPoints[2][0] - movePointName * 10, realPoints[2][1] + movePointName * 5);
+        context.fillText(`D(${Number(Number(parallelogramPoints[3][0]).toFixed(2))};${Number(Number(parallelogramPoints[3][1]).toFixed(2))})`, realPoints[3][0] + movePointName, realPoints[3][1] + movePointName * 5);
     }
 
-    // const rotatee = (point, rotatingPoint, angle) => {
-    //     var radians = (Math.PI / 180) * angle,
-    //         cos = Math.cos(radians),
-    //         sin = Math.sin(radians),
-    //         nx = (cos * (point.x - rotatingPoint.x)) + (sin * (point.y - rotatingPoint.y)) + rotatingPoint.x,
-    //         ny = (cos * (point.y - rotatingPoint.y)) - (sin * (point.x - rotatingPoint.x)) + rotatingPoint.y;
-    //     return { x : nx, y : ny };
-    // }
-
-    const rotate = (point, rotatingPoint, angle) => {
-        angle = -angle;
-        var radians = (Math.PI / 180) * angle;
-        var cos = Math.cos(radians);
-        var sin = Math.sin(radians);
-
-        var m1  = [[cos, -sin, 0], 
-                   [sin, cos, 0], 
-                   [0, 0, 1] 
-                ];
-        var m2 = [point.x - rotatingPoint.x, point.y - rotatingPoint.y, 1];
-        var res = math.multiply(m1, m2);
-        return { x : res[0] + rotatingPoint.x, y : res[1] + rotatingPoint.y };
+    const moveMatrix = (parallelogramPoints, ddx, ddy) => {
+        let moveMatrix = [
+            [1, 0, 0],
+            [0, 1, 0],
+            [ddx, ddy, 1]
+        ];
+        return math.multiply(parallelogramPoints, moveMatrix);
     }
 
-    const scale = (point, scale) => {
-        let m1 = math.matrix([point.x, point.y]);
-        let m2 = math.matrix([
-            [scale, 0]
-            [0, scale]
-        ]);
-        let res = math.multiply(m1, m2);
-        return {
-            x : res.get([0, 0]),
-            y : res.get([0, 1]),
-        }
+    const transform = (parallelogramPoints, rotatingPoint, iterationsAngle, scale) => {
+        let radians = (Math.PI / 180) * iterationsAngle;
+        let cos = Math.cos(radians);
+        let sin = Math.sin(radians);
+        let rotatingMatrix  = [
+            [cos, -sin, 0], 
+            [sin, cos, 0], 
+            [0, 0, 1] 
+        ];
+
+        let scalingMatrix = [
+            [scale, 0, 0],
+            [0, scale, 0],
+            [0, 0, 1]
+        ];
+
+        parallelogramPoints = moveMatrix(parallelogramPoints, -rotatingPoint[0], -rotatingPoint[1]);
+        parallelogramPoints = math.multiply(parallelogramPoints, rotatingMatrix);
+        parallelogramPoints = math.multiply(parallelogramPoints, scalingMatrix);
+        parallelogramPoints = moveMatrix(parallelogramPoints, rotatingPoint[0], rotatingPoint[1]);
+        return parallelogramPoints;
     }
 
+    const startDrawingParallelogram = async function () {
+        let startingPoints = parallelogramPoints;
+        let angleValue = isActiveCounterclockwise ? -90 : 90;
+        let scalingValue = isActiveReduction ? 1 / figureScale : figureScale;
 
-    const permanentDrawingParallelogram = () => {
-        let vectorFromCenterPoint = {
-            x: -(Number(point1.x) + Number(point4.x)) / 2,
-            y: -(Number(point1.y) + Number(point4.y)) / 2
-        };
+        const iterationsAmount = 1000;
+        let angleStep = angleValue / iterationsAmount;
+        let scaleStep = (scalingValue - 1) / iterationsAmount;
+        let rotatingPoint = [[x1, y1], [x2, y2], [x3, y3], [x4, y4]][document.querySelector('input[name="parallelogramPoint"]:checked').value];
 
-
-        currReduction += 0.001;
-        currAngle += Number(angle) / (Number(reduction - 1) / 0.001);
-
-
-        let rotatingPoint = [startingPoint1, startingPoint2, startingPoint3, startingPoint4][document.querySelector('input[name="parallelogramPoint"]:checked').value];
-        if(currReduction >= Number(reduction) && !isPausedOrStoped) {
-            currReduction = Number(reduction);
-            currAngle = Number(angle);
-            isPausedOrStoped = true;
+        for(let i = 0, iterationsScale = 1, iterationsAngle = 0; i < iterationsAmount; ++i, iterationsScale += scaleStep, iterationsAngle += angleStep) {
+            if(i === iterationsAmount - 1) 
+                iterationsScale = scalingValue;
+            setParallelogramPoints(transform(startingPoints, rotatingPoint, iterationsAngle, iterationsScale));
+            await new Promise(obj => setTimeout(obj, 3));
         }
-
-        let scalingValue = isActiveReduction ? 1 / currReduction : currReduction;
-        let angleValue = isActiveCounterclockwise ? -currAngle : currAngle;
-        SetPoint1(rotate({
-            x: scalingValue * (startingPoint1.x + vectorFromCenterPoint.x) - vectorFromCenterPoint.x,
-            y: scalingValue * (startingPoint1.y + vectorFromCenterPoint.y) - vectorFromCenterPoint.y
-        }, rotatingPoint, angleValue));
-        SetPoint2(rotate({
-            x: scalingValue * (startingPoint2.x + vectorFromCenterPoint.x) - vectorFromCenterPoint.x,
-            y: scalingValue * (startingPoint2.y + vectorFromCenterPoint.y) - vectorFromCenterPoint.y
-        }, rotatingPoint, angleValue));
-        SetPoint3(rotate({
-            x: scalingValue * (startingPoint3.x + vectorFromCenterPoint.x) - vectorFromCenterPoint.x,
-            y: scalingValue * (startingPoint3.y + vectorFromCenterPoint.y) - vectorFromCenterPoint.y
-        }, rotatingPoint, angleValue));
-        SetPoint4(rotate({
-            x: scalingValue * (startingPoint4.x + vectorFromCenterPoint.x) - vectorFromCenterPoint.x,
-            y: scalingValue * (startingPoint4.y + vectorFromCenterPoint.y) - vectorFromCenterPoint.y
-        }, rotatingPoint, angleValue));
-
-        if(isPausedOrStoped) {
-            stopDrawingParallelogram();
+        await new Promise(r => setTimeout(r, 1500));
+        for(let i = 0, iterationsScale = scalingValue, iterationsAngle = angleValue; i < iterationsAmount; ++i, iterationsScale -= scaleStep, iterationsAngle -= angleStep) {
+            setParallelogramPoints(transform(startingPoints, rotatingPoint, iterationsAngle, iterationsScale));
+            await new Promise(obj => setTimeout(obj, 3));
         }
+        setParallelogramPoints(startingPoints);
+        setIsActiveDrawing(false);
     }
 
     useEffect(() => {
-        if([point1, point2, point3, point4].map((point, _) => {
-            if(point.x === '' || point.y === '')
+        if([[x1, y1], [x2, y2], [x3, y3], [x4, y4]].map((point, _) => {
+            if(point[0] === '' || point[1] === '')
                 return false;
             return true;
         }).some(boolVal => boolVal === false)) {
             return;
         }
-            drawParallelogram();
-    }, [point1, point2, point3, point4])
-
-    const startDrawingParallelogram = () => {
-        interval = setInterval(permanentDrawingParallelogram, 3);
-    }
+            //drawParallelogram();
+    }, [x1, y1, x2, y2, x3, y3, x4, y4]);
 
     const stopDrawingParallelogram = () => {
-        clearInterval(interval);
-        interval = null;
+
     }
 
     const setDefaultCoordinates = () => {
-        setArePointsSet(true);
-
         defaultPoints.map((point, i) => {
             document.getElementById(`p${i + 1}X`).value = point.x;
             document.getElementById(`p${i + 1}Y`).value = point.y;
         })
-        SetStartingPoint1(defaultPoints[0]);
-        SetStartingPoint2(defaultPoints[1]);
-        SetStartingPoint3(defaultPoints[2]);
-        SetStartingPoint4(defaultPoints[3]);
-
-        SetPoint1(defaultPoints[0]);
-        SetPoint2(defaultPoints[1]);
-        SetPoint3(defaultPoints[2]);
-        SetPoint4(defaultPoints[3]);
+        setParallelogramPoints([
+           [defaultPoints[0].x, defaultPoints[0].y, 1],
+           [defaultPoints[1].x, defaultPoints[1].y, 1],
+           [defaultPoints[2].x, defaultPoints[2].y, 1],
+           [defaultPoints[3].x, defaultPoints[3].y, 1]
+        ]);
     }
 
     const mouseDown = (event) => {
@@ -456,8 +423,8 @@ export const Transformation = () => {
                                                             id='p1X'
                                                             name="p1X"
                                                             pattern="[1-9][0-9]*"
-                                                            onChange={(event) => SetStartingPoint1({x : Number(event.target.value), y : startingPoint1.y})}
-                                                            onInvalid={e => e.target.setCustomValidity('Введіть координату X')}
+                                                            onChange={(event) => setX1(Number(event.target.value))}
+                                                            onInvalid={e => e.target.setCustomValidity('Enter X coordinate!')}
                                                             onInput={e => e.target.setCustomValidity('')}
                                                             required
                                                         />
@@ -469,8 +436,8 @@ export const Transformation = () => {
                                                             id='p1Y'
                                                             name="p1Y"
                                                             pattern="[1-9][0-9]*"
-                                                            onChange={(event) => SetStartingPoint1({x : startingPoint1.x, y : Number(event.target.value)})}
-                                                            onInvalid={e => e.target.setCustomValidity('Введіть координату Y')}
+                                                            onChange={(event) => setY1(Number(event.target.value))}
+                                                            onInvalid={e => e.target.setCustomValidity('Enter Y coordinate!')}
                                                             onInput={e => e.target.setCustomValidity('')}
                                                             required
                                                         />
@@ -493,8 +460,8 @@ export const Transformation = () => {
                                                             id='p2X'
                                                             name="p2X"
                                                             pattern="[1-9][0-9]*"
-                                                            onChange={(event) => SetStartingPoint2({x : Number(event.target.value), y : startingPoint2.y})}
-                                                            onInvalid={e => e.target.setCustomValidity('Введіть координату X')}
+                                                            onChange={(event) => setX2(Number(event.target.value))}
+                                                            onInvalid={e => e.target.setCustomValidity('Enter X coordinate!')}
                                                             onInput={e => e.target.setCustomValidity('')}
                                                             required
                                                         />
@@ -506,8 +473,8 @@ export const Transformation = () => {
                                                             id='p2Y'
                                                             name="p2Y"
                                                             pattern="[1-9][0-9]*"
-                                                            onChange={(event) => SetStartingPoint2({x : startingPoint2.x, y : Number(event.target.value)})}
-                                                            onInvalid={e => e.target.setCustomValidity('Введіть координату Y')}
+                                                            onChange={(event) => setY2(Number(event.target.value))}
+                                                            onInvalid={e => e.target.setCustomValidity('Enter Y coordinate!')}
                                                             onInput={e => e.target.setCustomValidity('')}
                                                             required
                                                         />
@@ -530,8 +497,8 @@ export const Transformation = () => {
                                                             id='p3X'
                                                             name="p3X"
                                                             pattern="[1-9][0-9]*"
-                                                            onChange={(event) => SetStartingPoint3({x : Number(event.target.value), y : startingPoint3.y})}
-                                                            onInvalid={e => e.target.setCustomValidity('Введіть координату X')}
+                                                            onChange={(event) => setX3(Number(event.target.value))}
+                                                            onInvalid={e => e.target.setCustomValidity('Enter X coordinate!')}
                                                             onInput={e => e.target.setCustomValidity('')}
                                                             required
                                                         />
@@ -543,8 +510,8 @@ export const Transformation = () => {
                                                             id='p3Y'
                                                             name="p3Y"
                                                             pattern="[1-9][0-9]*"
-                                                            onChange={(event) => SetStartingPoint3({x : startingPoint3.x, y : Number(event.target.value)})}
-                                                            onInvalid={e => e.target.setCustomValidity('Введіть координату Y')}
+                                                            onChange={(event) => setY3(Number(event.target.value))}
+                                                            onInvalid={e => e.target.setCustomValidity('Enter Y coordinate!')}
                                                             onInput={e => e.target.setCustomValidity('')}
                                                             required
                                                         />
@@ -567,8 +534,8 @@ export const Transformation = () => {
                                                             id='p4X'
                                                             name="p4X"
                                                             pattern="[1-9][0-9]*"
-                                                            onChange={(event) => SetStartingPoint4({x : Number(event.target.value), y : startingPoint4.y})}
-                                                            onInvalid={e => e.target.setCustomValidity('Введіть координату X')}
+                                                            onChange={(event) => setX4(Number(event.target.value))}
+                                                            onInvalid={e => e.target.setCustomValidity('Enter X coordinate!')}
                                                             onInput={e => e.target.setCustomValidity('')}
                                                             required
                                                         />
@@ -580,8 +547,8 @@ export const Transformation = () => {
                                                             id='p4Y'
                                                             name="p4Y"
                                                             pattern="[1-9][0-9]*"
-                                                            onChange={(event) => SetStartingPoint4({x : startingPoint4.x, y : Number(event.target.value)})}
-                                                            onInvalid={e => e.target.setCustomValidity('Введіть координату Y')}
+                                                            onChange={(event) => setY4(Number(event.target.value))}
+                                                            onInvalid={e => e.target.setCustomValidity('Enter Y coordinate!')}
                                                             onInput={e => e.target.setCustomValidity('')}
                                                             required
                                                         />
@@ -635,8 +602,8 @@ export const Transformation = () => {
                                             <span className={`navbar-button justify-content-center ${isActiveCounterclockwise ? "navbar-button-slide" : "fractal-dotted-button"}`}>
                                                 <div className={isActiveCounterclockwise ? "" : "gradient"}>
                                                     <button className='figure-button' onClick={(event) => {
-                                                        event.preventDefault();
-                                                        setIsActiveCounterclockwise(false);
+                                                            event.preventDefault();
+                                                            setIsActiveCounterclockwise(false);
                                                         }}>
                                                         <img src={isActiveCounterclockwise ? clockwiseImage : clockwiseActiveImage} alt="increasing"/>
                                                     </button>
@@ -672,7 +639,7 @@ export const Transformation = () => {
                                                             name="reduction"
                                                             pattern="[1-9][0-9]*"
                                                             onChange={(event) => {
-                                                                SetReduction(event.target.value);
+                                                                setFigureScale(Number(event.target.value));
                                                             }}
                                                             onInvalid={e => e.target.setCustomValidity('Введіть значення, що задаватиме масштабування')}
                                                             onInput={e => e.target.setCustomValidity('')}
@@ -686,8 +653,8 @@ export const Transformation = () => {
                                             <span className={`navbar-button justify-content-center ${isActiveReduction ? "navbar-button-slide" : "fractal-dotted-button"}`}>
                                                 <div className={isActiveReduction ? "" : "gradient"}>
                                                     <button className='figure-button' onClick={(event) => {
-                                                        event.preventDefault();
-                                                        setIsActiveReduction(false);
+                                                            event.preventDefault();
+                                                            setIsActiveReduction(false);
                                                         }}>
                                                         <img src={isActiveReduction ? increasingImage : increasingActiveImage} alt="increasing"/>
                                                     </button>
@@ -737,11 +704,6 @@ export const Transformation = () => {
                                                     setIsActiveDrawing(false);
                                                     isPausedOrStoped = true;
                                                     stopDrawingParallelogram();
-
-                                                    SetPoint1(startingPoint1);
-                                                    SetPoint2(startingPoint2);
-                                                    SetPoint3(startingPoint3);
-                                                    SetPoint4(startingPoint4);
                                                 }}
                                             /> 
                                         </div> :
@@ -750,8 +712,6 @@ export const Transformation = () => {
                                                 onClick={() => {
                                                     setIsActiveDrawing(true);
                                                     startDrawingParallelogram();
-                                                    currReduction = 1;
-                                                    currAngle = 0;
                                                 }}
                                             />
                                         </div>
