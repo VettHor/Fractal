@@ -47,15 +47,15 @@ export const Home = props => {
                         <p>Let's look into the world of<br/>graphics and interact with it!</p>
                         <span className="navbar-button navbar-button-slide home-button transparent-button-active">
                             <button onClick={() => { 
-                                props.changeLink('fractal');
-                                navigate('/fractal');
+                                props.changeLink('study');
+                                navigate('/study');
                                 }}>
                                 <span>Get started</span>
                             </button>
                         </span>
                     </Col>
                     <Col xs={12} md={6} xl={5}>
-                        <img src={light_robot} alt="Robot"/>
+                        <img src={light_robot} alt="Robot" width={600}/>
                     </Col>
                 </Row>
             </Container>

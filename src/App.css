@@ -195,7 +195,7 @@ nav.navbar {
 /************ Home Css ************/
 .banner {
   margin-top: 0;
-  padding: 160px 0 100px 0;
+  padding: 145px 0 100px 0;
   /* background-image: url('./assets/img/stars.png'); */
   background-position: top center;
   background-size: cover;
@@ -203,7 +203,7 @@ nav.navbar {
 }
 
 .banner h1 {
-  font-size: 65px;
+  font-size: 67px;
   font-weight: 700;
   letter-spacing: 0.8px;
   line-height: 1;
@@ -213,7 +213,7 @@ nav.navbar {
 .banner p {
   color: #B8B8B8;
   text-align: start;
-  font-size: 38px;
+  font-size: 40px;
   letter-spacing: 1px;
   line-height: 1.5em;
   font-weight: 400;
@@ -223,18 +223,19 @@ nav.navbar {
 .banner button {
   color: #fff;
   font-weight: 700;
-  font-size: 20px;
+  font-size: 40px;
   margin-top: 15px;
   letter-spacing: 0.8px;
   display: flex;
   align-items: center;
   justify-content: center;
   margin-left: 0;
-  width: 26rem;
+  width: 32rem;
+  height: 6.8rem;
 }
 
 .banner button span{
-  font-size: 37px;
+  font-size: 40px;
 }
 
 .banner img {
@@ -1137,12 +1138,12 @@ input[type="checkbox"]:focus + .reverse-input-tick {
   transition: 0.3s;
 }
 
-.radio-point:disabled {
+.radio-point:disabled:after {
   cursor: default;
 }
 
 .radio-point:disabled:checked:after {
-  background-color: #962b7c;
+  background-color: #3f3f3f;
 }
 
 .parallelogram-point-1 {
@@ -1314,11 +1315,36 @@ input[type="checkbox"]:focus + .reverse-input-tick {
   color: #CB2E81;
 }
 
+.header-selector-study {
+  margin-top: 2rem !important;
+  margin-bottom: 2rem !important;
+  font-size: 3rem;
+  font-weight: 900;
+  color: #CB2E81;
+}
+
 .header-topic {
   margin-bottom: 2rem !important;
   font-size: 3.2rem;
   font-weight: 900;
   color: #CB2E81;
+}
+
+.study-header-topic {
+  margin-bottom: 2rem !important;
+  font-size: 2.6rem;
+  font-weight: 900;
+  color: #CB2E81;
+  text-align: center;
+}
+
+.study-text {
+  font-size: 1.7rem;
+  font-weight: 700;
+  color: white;
+  text-align: justify;
+  margin-top: -1rem;
+  margin-right: 2.5rem;
 }
 
 .test-option {
@@ -1458,6 +1484,14 @@ input[type="checkbox"]:focus + .reverse-input-tick {
 
 .finish-button button {
   width: 40rem;
+}
+
+.study .finish-button button {
+  width: 26rem;
+}
+
+.study .finish-button button span{
+  font-size: 2.3rem;
 }
 
 .finish-div {
@@ -1635,4 +1669,40 @@ input[type="checkbox"]:focus + .reverse-input-tick {
 
 .transformation-parameters-div {
   margin-top: 4.9rem !important;
+}
+
+.study { 
+  padding: 85px 0px 0px 0px;
+}
+
+.study-selection .home-button button {
+  width: 28.5rem;
+  height: 37rem;
+  margin-left: 2.5rem;
+}
+
+.centered-img {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  width: 50%;
+  margin-bottom: 2rem;
+}
+
+ul {
+  margin-left: 1rem;
+}
+li {
+  list-style-type: none;
+  position: relative;    /* It's needed for setting position to absolute in the next rule. */
+  margin-bottom: 1.5rem !important;
+}
+
+li::before {
+  content: '■';
+  color: #CB2E81;
+  position: absolute;
+  left: -0.8em;          /* Adjust this value so that it appears where you want. */
+  font-size: 3em;      /* Adjust this value so that it appears what size you want. */
+  top: -.4em;
 }

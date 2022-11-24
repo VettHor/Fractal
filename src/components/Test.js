@@ -261,12 +261,6 @@ export const Test = () => {
                                             </div>
 
                                             <h2 className='header-question'>3. How many iterations passed from the initial state to the final state?</h2>
-                                            <div className='d-flex justify-content-center align-items-center w-100'>
-                                                {/* <div className='ratio ratio-16x9 w-50'>
-                                                    <iframe src="https://www.youtube.com/embed/MTYW4Re_RsY?enablejsapi=1&version=3&playerapiid=ytplayer" title="Fractal" allowFullScreen></iframe>
-                                                </div> */}
-                                            </div>
-
                                             <div className='d-flex justify-content-left'>
                                                 <div className='answers koch-answers'>
                                                     <Row>

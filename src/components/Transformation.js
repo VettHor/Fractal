@@ -579,10 +579,10 @@ export const Transformation = () => {
             <Popout 
                 open={openPopout} 
                 onClose={() => setOpenPopout(false)} 
-                header='Transformation' 
-                text='The RGB color model is an additive color model in which the red, green, and blue primary colors of light are added together in various ways to reproduce a broad array of colors. The main purpose of the RGB color model is for the sensing, representation, and display of images in electronic systems.'
-                nextHeader='HSV'
-                nextText='HSV is closer to how humans perceive color. It has three components: hue, saturation, and value. This color space describes colors (hue or tint) in terms of their shade (saturation or amount of gray) and their brightness value. Moreover, the HSV color wheel also contributes to high-quality graphics.'
+                header='⠀⠀Transformation' 
+                text='Affine transformation is a geometric transformation that preserves lines and parallelism. Sets of parallel affine subspaces remain parallel after an affine transformation. An affine transformation preserves ratios of distances between points lying on a straight line.⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀'
+                nextHeader='Examples'
+                nextText='Examples of affine transformations include translation, scaling, homothety, similarity, reflection, rotation, shear mapping, and compositions of them in any combination and sequence.'
             />
             <ErrorMessage
                 open={isRaisedError}

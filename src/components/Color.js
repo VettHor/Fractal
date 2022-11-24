@@ -12,6 +12,7 @@ import 'tippy.js/dist/tippy.css'
 import 'tippy.js/animations/scale.css';
 
 export const Color = () => {
+    //initializing all variables : canvases, current HSV coordinates, Saturation and Value
     const canvas1 = useRef(null);
     const canvas2 = useRef(null);
     const [isActivePopout, setActivePopout] = useState(false);
@@ -23,8 +24,11 @@ export const Color = () => {
         x: 0, 
         y: 0
     });
+
+    //set current color to change
     const [currColorSaturation, setCurrColorSaturation] = useState('Red');
 
+    //make empty canvases
     useEffect(() => {
         let context1 = canvas1.current.getContext("2d");
         context1.fillStyle = "white";
@@ -35,33 +39,40 @@ export const Color = () => {
         context2.fillRect(0, 0, canvas2.current.width, canvas2.current.height);
     }, []);
 
+    //when change Saturation or Value slider - redraw canvas
     useEffect(() => {
         setSaturation();
         setCurrHue();
     }, [colorSliderValue, colorSliderValueV]);
 
+    //to be able to show canvas
     const setPopoutState = (state) => {
         setActivePopout(state)
         setOpenPopout(!state);
     }
 
+    //to be able to drag image
     const dragStartHandler = (e) => {
         e.preventDefault();
     }
 
+    //to be able to drag image
     const dragLeaveHandler = (e) => {
         e.preventDefault();
     }
 
+    //select file and draw image on canvases
     const onDropHandler = (e) => {
         e.preventDefault();
         drawImageWithFile(e.dataTransfer.files[0])
     }
 
+    //draw image with given file
     const onSelectImage = (e) => {
         drawImageWithFile(e.target.files[0]);
     }
 
+    //sets RGB and HSV panels, draws images on canvases
     const drawImageWithFile = (file) => {
         document.getElementById('color-display-R').innerHTML = 255;
         document.getElementById('color-display-G').innerHTML = 255;
@@ -101,6 +112,7 @@ export const Color = () => {
         }
     }
 
+    //scale image to fit canvases
     const drawImageScaled = (img, ctx) => {
         var canvas = ctx.canvas;
         var hRatio = canvas.width / img.width;
@@ -111,16 +123,19 @@ export const Color = () => {
         ctx.drawImage(img, 0, 0, img.width, img.height, centerShift_x, centerShift_y, img.width * ratio, img.height * ratio);  
     }
 
+    //when is over canvas show table with near pixels
     const mouseOver = () => {
         document.getElementById('circled-table').style.display = 'block';
         document.getElementById('pixel-coordinates-panel').style.display = 'block';
     }
 
+    //when is out canvas delete table
     const mouseOut = () => {
         document.getElementById('circled-table').style.display = 'none';
         document.getElementById('pixel-coordinates-panel').style.display = 'none';
     }
 
+    //when move mouse through canvas - display table with pixles 11 x 11
     const mouseMove = (currCanvas, event) => {
         let canvas = currCanvas === 'canvas-1' ? canvas1.current : canvas2.current;
         let table = document.getElementById('circled-table');
@@ -146,7 +161,7 @@ export const Color = () => {
         document.getElementById('pixel-coordinates').innerHTML = `x: ${x}⠀y: ${y}`;
     }
 
-
+    //function to be able to get pixel by click event
     const getPixel = (currCanvas, event) => {
         let canvas = currCanvas === 'canvas-1' ? canvas1.current : canvas2.current;
         let rect = canvas.getBoundingClientRect();
@@ -162,6 +177,7 @@ export const Color = () => {
         }
     }
 
+    //set color model parameters (RGB/HSV) on panel by given coordinates of pixel on canvas
     const setPixelWithXY = (currCanvas, x, y) => {
         let canvas = currCanvas === 'canvas-1' ? canvas1.current : canvas2.current;
         let [ r, g, b ] = getCanvasPixelColor(canvas, x, y);
@@ -179,6 +195,7 @@ export const Color = () => {
         }
     }
 
+    //to be able to convert RGB color model to HSV
     const RGBToHSV = ([r, g, b]) => {
         [r, g, b] = [r/255, g/255, b/255];
         let cmax = Math.max(Math.max(r, g), b);
@@ -212,6 +229,7 @@ export const Color = () => {
         return [h, s * 100, v * 100];
     }
 
+    //to be able to convert HSV color model to RGB
     const HSVToRGB = ([h, s, v]) => {
         [h, s, v] = [h/360, s/100, v/100];
         var r, g, b, i, f, p, q, t;
@@ -235,6 +253,7 @@ export const Color = () => {
         ];
     }
 
+    //range of Hue of different given colors
     const getCurrentColorRange = () => {
         if(currColorSaturation === 'Yellow')
             return {
@@ -264,6 +283,7 @@ export const Color = () => {
         return null;
     }
 
+    //set saturation of image with sliders
     const setSaturation = () => {
         let context1 = canvas1.current.getContext('2d');
         let context2 = canvas2.current.getContext('2d');
@@ -290,11 +310,13 @@ export const Color = () => {
         }
     }
 
+    //display Hue value on HSV panel
     const setCurrHue = () => {
         if(currHSVCoordinates.isSet && colorSliderValueV === 0) 
             document.getElementById('color-display-H').innerHTML = `${Math.round(RGBToHSV(getCanvasPixelColor(canvas1.current, currHSVCoordinates.x, currHSVCoordinates.y))[0])}°`;
     }
 
+    //exports iamge from canvas
     const exportColorImage = (currCanvas) => {
         let canvas = currCanvas === 'canvas-1' ? canvas1.current : canvas2.current;
         saveAs(canvas.toDataURL("image/png"), 'GraphicsImage');

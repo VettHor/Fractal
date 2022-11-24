@@ -6,6 +6,7 @@ import { Fractal } from "./Fractal";
 import { Color } from "./Color";
 import { Transformation } from "./Transformation";
 import { Test } from "./Test"
+import { Study } from "./Study";
 import logo from '../assets/img/logo.png';
 
 export const NavBar = () => {
@@ -45,6 +46,7 @@ export const NavBar = () => {
                     <Navbar.Collapse id="basic-navbar-nav">
                         <Nav className="mx-auto justify-content-between w-100">
                             <Nav.Link as={Link} to="/" className={activeLink === 'home' ? 'active navbar-link' : 'navbar-link'} onClick={() => onUpdateActiveLink('home')}>Home</Nav.Link>
+                            <Nav.Link as={Link} to="/study" className={activeLink === 'study' ? 'active navbar-link' : 'navbar-link'} onClick={() => onUpdateActiveLink('study')}>Study</Nav.Link>
                             <Nav.Link as={Link} to="/fractal" className={activeLink === 'fractal' ? 'active navbar-link' : 'navbar-link'} onClick={() => onUpdateActiveLink('fractal')}>Fractal</Nav.Link>
                             <Nav.Link as={Link} to="/color" className={activeLink === 'color' ? 'active navbar-link' : 'navbar-link'} onClick={() => onUpdateActiveLink('color')}>Color</Nav.Link>
                             <Nav.Link as={Link} to="/transformation" className={activeLink === 'transformation' ? 'active navbar-link' : 'navbar-link'} onClick={() => onUpdateActiveLink('transformation')}>Transformation</Nav.Link>
@@ -56,6 +58,7 @@ export const NavBar = () => {
             <div>
                 <Routes>
                     <Route path="/" element={<Home changeLink={link => setActiveLink(link)}/>}/>
+                    <Route path="/study" element={<Study/>}/>
                     <Route path="/fractal" element={<Fractal/>}/>
                     <Route path="/color" element={<Color/>}/>
                     <Route path="/transformation" element={<Transformation/>}/>
