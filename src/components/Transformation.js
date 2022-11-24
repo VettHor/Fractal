@@ -5,8 +5,9 @@ import parallelogram from '../assets/img/parallelogram.png';
 import questionRobot from '../assets/img/question_robot.png';
 import questionRobotActive from '../assets/img/question_robot_active.png';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
-import { faPlayCircle, faDownload, faLightbulb } from "@fortawesome/free-solid-svg-icons"
+import { faPlayCircle, faDownload, faBoltLightning } from "@fortawesome/free-solid-svg-icons"
 import { ErrorMessage } from './ErrorMessage';
+import { PossiblePointMessage } from './PossiblePointMessage';
 import reductionImage from '../assets/img/reduction.png'
 import reductionActiveImage from '../assets/img/reduction_active.png'
 import increasingImage from '../assets/img/increasing.png'
@@ -15,6 +16,9 @@ import clockwiseImage from '../assets/img/clockwise.png'
 import clockwiseActiveImage from '../assets/img/clockwise_active.png'
 import counterclockwiseImage from '../assets/img/counterclockwise.png'
 import counterclockwiseActiveImage from '../assets/img/counterclockwise_active.png'
+import Tippy from '@tippyjs/react';
+import 'tippy.js/dist/tippy.css'
+import 'tippy.js/animations/scale.css';
 import { create, all } from 'mathjs'
 const config = { }
 const math = create(all, config)
@@ -51,7 +55,7 @@ export const Transformation = () => {
     const [y4, setY4] = useState(0);
 
     const [figureScale, setFigureScale] = useState('');
-    const [angle, SetAngle] = useState('');
+    const [angle, SetAngle] = useState(0);
 
     const zoomDefaultValue = 6;
     const [currZoom, setCurrZoom] = useState(zoomDefaultValue);
@@ -67,12 +71,119 @@ export const Transformation = () => {
     const [parallelogramPoints, setParallelogramPoints] = useState([]);
     const [isFirstSaveClicked, setIsFirstSaveClicked] = useState(false);
     const [isRaisedError, setIsRaisedError] = useState(false);
+    const [isRaisedHint, setIsRaisedHint] = useState(false);
+    const [needToSetLastPoint, setNeedToSetLastPoint] = useState(false);
+    const [possibleNewX, setPossibleNewX] = useState(0);
+    const [possibleNewY, setPossibleNewY] = useState(0);
 
     useEffect(() => {
         drawCoordinateSystem();
         if(arePointsSet) 
             drawParallelogram();
     }, [dx, dy, currZoom, parallelogramPoints]);
+
+    useEffect(() => {
+        for(let i = 0; needToSetLastPoint && i < 4; ++i) {
+            if(document.getElementById(`p${i + 1}X`).value === '' && document.getElementById(`p${i + 1}Y`).value === '') {
+                setLastPoint(`${i + 1}`, possibleNewX, possibleNewY);
+                return;
+            }
+        }
+    }, [needToSetLastPoint]);
+
+    useEffect(() => {
+        setNeedToSetLastPoint(false);
+        if(isNumeric(document.getElementById('p2X').value) && isNumeric(document.getElementById('p2Y').value) && 
+            isNumeric(document.getElementById('p3X').value) && isNumeric(document.getElementById('p3Y').value) &&
+            isNumeric(document.getElementById('p4X').value) && isNumeric(document.getElementById('p4Y').value) &&
+                document.getElementById('p1X').value === '' && document.getElementById('p1Y').value === '') {
+            
+            let possibleNewX1 = x2 + x3 - x4;
+            let possibleNewY1 = y2 + y3 - y4;
+
+            if( ((y2 - possibleNewY1) / (x2 - possibleNewX1) === (y4 - y3) / (x4 - x3)) &&
+                ((possibleNewY1 - y3) / (possibleNewX1 - x3) === (y2 - y4) / (x2 - x4)) ) {
+                    setIsRaisedHint(true);
+                    setPossibleNewX(possibleNewX1);
+                    setPossibleNewY(possibleNewY1);
+            }
+        }
+
+        if(isNumeric(document.getElementById('p1X').value) && isNumeric(document.getElementById('p1Y').value) && 
+            isNumeric(document.getElementById('p3X').value) && isNumeric(document.getElementById('p3Y').value) &&
+            isNumeric(document.getElementById('p4X').value) && isNumeric(document.getElementById('p4Y').value) &&
+                document.getElementById('p2X').value === '' && document.getElementById('p2Y').value === '') {
+            
+            let possibleNewX2 = x1 + x4 - x3;
+            let possibleNewY2 = y1 + y4 - y3;
+
+            if(((possibleNewY2 - y1) / (possibleNewX2 - x1) === (y4 - y3) / (x4 - x3)) &&
+            ((y1 - y3) / (x1 - x3) === (possibleNewY2 - y4) / (possibleNewX2 - x4)))
+            {
+                setIsRaisedHint(true);
+                setPossibleNewX(possibleNewX2);
+                setPossibleNewY(possibleNewY2);
+            }
+        }  
+
+        if(isNumeric(document.getElementById('p1X').value) && isNumeric(document.getElementById('p1Y').value) && 
+            isNumeric(document.getElementById('p2X').value) && isNumeric(document.getElementById('p2Y').value) &&
+            isNumeric(document.getElementById('p4X').value) && isNumeric(document.getElementById('p4Y').value) &&
+                document.getElementById('p3X').value === '' && document.getElementById('p3Y').value === '') {
+            
+            let possibleNewX3 = x1 + x4 - x2;
+            let possibleNewY3 = y1 + y4 - y2;
+
+            if(((y2 - y1) / (x2 - x1) === (y4 - possibleNewY3) / (x4 - possibleNewX3)) &&
+            ((y1 - possibleNewY3) / (x1 - possibleNewX3) === (y2 - y4) / (x2 - x4)))
+            {
+                setIsRaisedHint(true);
+                setPossibleNewX(possibleNewX3);
+                setPossibleNewY(possibleNewY3);
+            }
+        }  
+
+        if(isNumeric(document.getElementById('p1X').value) && isNumeric(document.getElementById('p1Y').value) && 
+            isNumeric(document.getElementById('p2X').value) && isNumeric(document.getElementById('p2Y').value) &&
+            isNumeric(document.getElementById('p3X').value) && isNumeric(document.getElementById('p3Y').value) &&
+                document.getElementById('p4X').value === '' && document.getElementById('p4Y').value === '') {
+            
+            let possibleNewX4 = x2 + x3 - x1;
+            let possibleNewY4 = y2 + y3 - y1;
+
+            if(((y2 - y1) / (x2 - x1) === (possibleNewY4 - y3) / (possibleNewX4 - x3)) &&
+            ((y1 - y3) / (x1 - x3) === (y2 - possibleNewY4) / (x2 - possibleNewX4)))
+            {
+                setIsRaisedHint(true);
+                setPossibleNewX(possibleNewX4);
+                setPossibleNewY(possibleNewY4);
+            }
+        }  
+        // if(((y2 - y1) / (x2 - x1) === (y4 - y3) / (x4 - x3)) &&
+        // ((y1 - y3) / (x1 - x3) === (y2 - y4) / (x2 - x4)))
+        // {
+            
+        // }
+    }, [x1, y1, x2, y2, x3, y3, x4, y4]);
+
+    const setLastPoint = (pointNumber, x, y) => {
+        document.getElementById(`p${pointNumber}X`).value = x;
+        document.getElementById(`p${pointNumber}Y`).value = y;
+
+        if(pointNumber === '1') {
+            setX1(x);
+            setY1(y);
+        } else if (pointNumber === '2') {
+            setX2(x);
+            setY2(y);
+        }else if (pointNumber === '3') {
+            setX3(x);
+            setY3(y);
+        } else {
+            setX4(x);
+            setY4(y);
+        }
+    }
     
     const exportParallelogram = () => {
         let anchor = document.createElement("a");
@@ -182,33 +293,31 @@ export const Transformation = () => {
         setOpenPopout(!state);
     }
 
-    const isParallelogram = () => {
-        if(((y2 - y1) / (x2 - x1) === (y4 - y3) / (x4 - x3)) &&
-            ((y1 - y3) / (x1 - x3) === (y2 - y4) / (x2 - x4)))
-            return true;
-        return false;
-    }
+    const isNumeric = (str) => {
+        if (typeof str != "string") return false;
+        return !isNaN(str) && !isNaN(parseFloat(str))
+    }    
 
     const validateInputs = () => {
         for(let i = 0; i < 4; ++i) {
-            if(document.getElementById(`p${i + 1}X`).value === '') {
+            if(!isNumeric(document.getElementById(`p${i + 1}X`).value)) {
                 document.getElementById(`p${i + 1}X`).reportValidity();
-                return;
+                return false;
             }
-            if(document.getElementById(`p${i + 1}Y`).value === '') {
+            if(!isNumeric(document.getElementById(`p${i + 1}Y`).value)) {
                 document.getElementById(`p${i + 1}Y`).reportValidity();
-                return;
+                return false;
             }
         }
-        if(document.getElementById('reduction').value === '') {
+        if(!isNumeric(document.getElementById('reduction').value)) {
             document.getElementById('reduction').reportValidity();
-            return;
+            return false;
         }
         
         if(!(((Number(document.getElementById('p2Y').value) - Number(document.getElementById('p1Y').value)) / (Number(document.getElementById('p2X').value) - Number(document.getElementById('p1X').value)) === (Number(document.getElementById('p4Y').value) - Number(document.getElementById('p3Y').value)) / (Number(document.getElementById('p4X').value) - Number(document.getElementById('p3X').value))) &&
             ((Number(document.getElementById('p1Y').value) - Number(document.getElementById('p3Y').value)) / (Number(document.getElementById('p1X').value) - Number(document.getElementById('p3X').value)) === (Number(document.getElementById('p2Y').value) - Number(document.getElementById('p4Y').value)) / (Number(document.getElementById('p2X').value) - Number(document.getElementById('p4X').value))))) {
             setIsRaisedError(true);
-            return;
+            return false;
         }
 
         setX1(Number(document.getElementById('p1X').value));
@@ -227,6 +336,7 @@ export const Transformation = () => {
             [Number(document.getElementById('p3X').value), Number(document.getElementById('p3Y').value), 1],
             [Number(document.getElementById('p4X').value), Number(document.getElementById('p4Y').value), 1],
         ]);
+        return true;
     }
 
     const disableAll = () => {
@@ -257,7 +367,8 @@ export const Transformation = () => {
             document.getElementById(`p${i + 1}X`).disabled = true;
             document.getElementById(`p${i + 1}Y`).disabled = true;
         }
-        document.getElementById('angle').disabled = true;
+        document.getElementById('slider').disabled = true;
+        document.getElementById('angleHeader').classList.add('slider-container-transformation-header-disabled');
         document.getElementById('reduction').disabled = true;
     }
 
@@ -289,7 +400,8 @@ export const Transformation = () => {
             document.getElementById(`p${i + 1}X`).disabled = false;
             document.getElementById(`p${i + 1}Y`).disabled = false;
         }
-        document.getElementById('angle').disabled = false;
+        document.getElementById('slider').disabled = false;
+        document.getElementById('angleHeader').classList.remove('slider-container-transformation-header-disabled');
         document.getElementById('reduction').disabled = false;
     }
 
@@ -372,7 +484,6 @@ export const Transformation = () => {
                 isStopped = false;
                 return;
             }
-            console.log(isStopped);
             if(i === iterationsAmount - 1) 
                 iterationsScale = scalingValue;
             setParallelogramPoints(transform(startingPoints, rotatingPoint, iterationsAngle, iterationsScale));
@@ -396,7 +507,20 @@ export const Transformation = () => {
         defaultPoints.map((point, i) => {
             document.getElementById(`p${i + 1}X`).value = point.x;
             document.getElementById(`p${i + 1}Y`).value = point.y;
-        })
+        });
+
+        setX1(defaultPoints[0].x);
+        setY1(defaultPoints[0].y);
+
+        setX2(defaultPoints[1].x);
+        setY2(defaultPoints[1].y);
+
+        setX3(defaultPoints[2].x);
+        setY3(defaultPoints[2].y);
+
+        setX4(defaultPoints[3].x);
+        setY4(defaultPoints[3].y);
+
         setParallelogramPoints([
            [defaultPoints[0].x, defaultPoints[0].y, 1],
            [defaultPoints[1].x, defaultPoints[1].y, 1],
@@ -466,16 +590,28 @@ export const Transformation = () => {
                 header='Wrong input!'
                 text='This is not parallelogram! Change coordinates!'
             />
+            <PossiblePointMessage
+                open={isRaisedHint}
+                onClose={() => setIsRaisedHint(false)}
+                onSetPoint={() => setNeedToSetLastPoint(true)}
+                header='Calculating . . .'
+                text='I calculated the last point to create a parallelogram! Do you want me to set it?'
+            />
             <section className='transformation' id="transformation">
                 <Container fluid className='justify-content-center text-center align-items-center'>
                     <Row> 
-                        <Col xs={12} md={6} xl={6}>
+                        <Col xs={12} md={6} xl={7}>
                             <div className='transformation-left-side'>
-                                <FontAwesomeIcon icon={faLightbulb} size="3x" className='cursor-pointer-bulb'
-                                    onClick={() => {
-                                        setDefaultCoordinates();
-                                    }}
-                                />
+                                <Tippy placement='top' animation='scale' theme={'fractal'} content={
+                                        <div className='text-center'>
+                                            <span className='fs-4'>Click to fill random coordinates</span>
+                                        </div>}>
+                                    <FontAwesomeIcon icon={faBoltLightning} size="3x" className='cursor-pointer-bulb'
+                                        onClick={() => {
+                                            setDefaultCoordinates();
+                                        }}
+                                    />
+                                </Tippy>
                                 <Form>
                                     <img src={parallelogram} alt="parallelogram"></img>
                                     { Array.from({length: 4}).map((_, i) => {
@@ -500,7 +636,7 @@ export const Transformation = () => {
                                                             name="p1X"
                                                             pattern="[1-9][0-9]*"
                                                             onChange={(event) => setX1(Number(event.target.value))}
-                                                            onInvalid={e => e.target.setCustomValidity('Enter X coordinate!')}
+                                                            onInvalid={e => e.target.setCustomValidity('Enter a number for the X coordinate!')}
                                                             onInput={e => e.target.setCustomValidity('')}
                                                             required
                                                         />
@@ -513,7 +649,7 @@ export const Transformation = () => {
                                                             name="p1Y"
                                                             pattern="[1-9][0-9]*"
                                                             onChange={(event) => setY1(Number(event.target.value))}
-                                                            onInvalid={e => e.target.setCustomValidity('Enter Y coordinate!')}
+                                                            onInvalid={e => e.target.setCustomValidity('Enter a number for the Y coordinate!')}
                                                             onInput={e => e.target.setCustomValidity('')}
                                                             required
                                                         />
@@ -537,7 +673,7 @@ export const Transformation = () => {
                                                             name="p2X"
                                                             pattern="[1-9][0-9]*"
                                                             onChange={(event) => setX2(Number(event.target.value))}
-                                                            onInvalid={e => e.target.setCustomValidity('Enter X coordinate!')}
+                                                            onInvalid={e => e.target.setCustomValidity('Enter a number for the X coordinate!')}
                                                             onInput={e => e.target.setCustomValidity('')}
                                                             required
                                                         />
@@ -550,7 +686,7 @@ export const Transformation = () => {
                                                             name="p2Y"
                                                             pattern="[1-9][0-9]*"
                                                             onChange={(event) => setY2(Number(event.target.value))}
-                                                            onInvalid={e => e.target.setCustomValidity('Enter Y coordinate!')}
+                                                            onInvalid={e => e.target.setCustomValidity('Enter a number for the Y coordinate!')}
                                                             onInput={e => e.target.setCustomValidity('')}
                                                             required
                                                         />
@@ -574,7 +710,7 @@ export const Transformation = () => {
                                                             name="p3X"
                                                             pattern="[1-9][0-9]*"
                                                             onChange={(event) => setX3(Number(event.target.value))}
-                                                            onInvalid={e => e.target.setCustomValidity('Enter X coordinate!')}
+                                                            onInvalid={e => e.target.setCustomValidity('Enter a number for the X coordinate!')}
                                                             onInput={e => e.target.setCustomValidity('')}
                                                             required
                                                         />
@@ -587,7 +723,7 @@ export const Transformation = () => {
                                                             name="p3Y"
                                                             pattern="[1-9][0-9]*"
                                                             onChange={(event) => setY3(Number(event.target.value))}
-                                                            onInvalid={e => e.target.setCustomValidity('Enter Y coordinate!')}
+                                                            onInvalid={e => e.target.setCustomValidity('Enter a number for the Y coordinate!')}
                                                             onInput={e => e.target.setCustomValidity('')}
                                                             required
                                                         />
@@ -611,7 +747,7 @@ export const Transformation = () => {
                                                             name="p4X"
                                                             pattern="[1-9][0-9]*"
                                                             onChange={(event) => setX4(Number(event.target.value))}
-                                                            onInvalid={e => e.target.setCustomValidity('Enter X coordinate!')}
+                                                            onInvalid={e => e.target.setCustomValidity('Enter a number for the X coordinate!')}
                                                             onInput={e => e.target.setCustomValidity('')}
                                                             required
                                                         />
@@ -624,7 +760,7 @@ export const Transformation = () => {
                                                             name="p4Y"
                                                             pattern="[1-9][0-9]*"
                                                             onChange={(event) => setY4(Number(event.target.value))}
-                                                            onInvalid={e => e.target.setCustomValidity('Enter Y coordinate!')}
+                                                            onInvalid={e => e.target.setCustomValidity('Enter a number for the Y coordinate!')}
                                                             onInput={e => e.target.setCustomValidity('')}
                                                             required
                                                         />
@@ -636,7 +772,7 @@ export const Transformation = () => {
                                     </Row>
 
 
-                                    <Row className="justify-content-center mt-5">
+                                    <Row className="justify-content-center transformation-parameters-div">
                                         <Col>
                                             <span className={`input-selector navbar-button justify-content-center ${isActiveCounterclockwise ? "fractal-dotted-button" : "navbar-button-slide"}`}>
                                                 <div className={isActiveCounterclockwise ? "gradient" : ""}>
@@ -650,28 +786,13 @@ export const Transformation = () => {
                                             </span>
                                         </Col>
                                         <Col>
-                                            <div className='bg-white border-custom-line color-position w-100 h-100'>
-                                                <Form.Group>
-                                                    <Row className="justify-content-center">
-                                                        <div className='d-flex justify-content-center'>
-                                                            <Form.Control
-                                                                className="transformation-input fs-3 rounded-0 dotted-input-transformation text-center mt-3"
-                                                                placeholder='0'
-                                                                type="number"
-                                                                id='angle'
-                                                                name="angle"
-                                                                pattern="[1-9][0-9]*"
-                                                                onChange={(event) => {
-                                                                    SetAngle(Number(event.target.value));
-                                                                }}
-                                                                onInvalid={e => e.target.setCustomValidity('Введіть чисельник дробу, що задає відношення поділу')}
-                                                                onInput={e => e.target.setCustomValidity('')}
-                                                                required
-                                                            />
-                                                            <h1 className='degree'>°</h1>
-                                                        </div>
-                                                    </Row>
-                                                </Form.Group>
+                                            <div className='bg-white border-custom-line color-position above-inputs-width h-100'>
+                                                <div className="slider-container-transformation">
+                                                    <h1 id='angleHeader'>{angle}°</h1>
+                                                    <input id='slider' defaultValue='0' type="range" min="0" max="360" step='1' onInput={(event) => {
+                                                        SetAngle(Number(event.target.value));
+                                                    }}/>
+                                                </div>
                                             </div>
                                         </Col>
                                         <Col>
@@ -704,7 +825,7 @@ export const Transformation = () => {
                                             </span>
                                         </Col>
                                         <Col>
-                                            <div className='bg-white border-custom-line color-position w-100 h-100'>
+                                            <div className='bg-white border-custom-line color-position above-inputs-width h-100'>
                                                 <Form.Group>
                                                     <Row className="justify-content-center">
                                                         <Form.Control
@@ -717,7 +838,7 @@ export const Transformation = () => {
                                                             onChange={(event) => {
                                                                 setFigureScale(Number(event.target.value));
                                                             }}
-                                                            onInvalid={e => e.target.setCustomValidity('Enter scaling value')}
+                                                            onInvalid={e => e.target.setCustomValidity('Enter scaling number!')}
                                                             onInput={e => e.target.setCustomValidity('')}
                                                             required
                                                         />
@@ -739,12 +860,12 @@ export const Transformation = () => {
                                         </Col>
                                     </Row>
 
-                                    <Form.Group className="mt-4">
+                                    <Form.Group className="mt-3">
                                         <Row className="justify-content-center">
                                             <span className='navbar-button navbar-button-slide home-button justify-content-center'>
                                                 <button id='save-button' className='calc-button' type="button" onClick={() => {
-                                                        validateInputs();
-                                                        if(!isFirstSaveClicked) {
+                                                        let isValidated = validateInputs();
+                                                        if(!isFirstSaveClicked && isValidated) {
                                                             document.getElementsByClassName('record-transformation-panel')[0].classList.remove('opacity-50');
                                                             document.getElementsByClassName('mt-play-buttons-disabled')[0].classList.add('mt-play-buttons');
                                                             document.getElementsByClassName('mt-play-buttons')[0].classList.remove('mt-play-buttons-disabled');
@@ -759,7 +880,7 @@ export const Transformation = () => {
                                 </Form>
                             </div>
                         </Col>
-                        <Col xs={12} md={6} xl={6}>
+                        <Col xs={12} md={6} xl={5}>
                             <div className='transformation-right-side'>
                                 <div className='question-panel question-panel-transformation'>
                                     <div className='image-div'>

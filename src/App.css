@@ -316,7 +316,7 @@ nav.navbar {
 }
 
 .calc-button {
-  height: 90px;
+  width: 432px !important;
   margin-top: 8px;
 }
 
@@ -458,6 +458,20 @@ hr.solid {
   width: 220px;
 }
 
+.possible-point-button {
+  font-size: 2rem;
+  margin-bottom: 6rem;
+  height: 80px;
+  line-height: 2rem;
+  width: 260px;
+}
+
+.possible-point-button-left {
+  margin-left: 12rem;
+  margin-right: 5rem;
+}
+
+
 *{
   -ms-overflow-style: none;
   }
@@ -547,6 +561,14 @@ hr.solid {
   font-weight: 800;
 }
 
+.possible-point-h1 {
+  color: #09a1e5;
+  padding-top: 15px;
+  padding-left: 10rem;
+  font-size: 65px;
+  font-weight: 800;
+}
+
 .page-position {
   font-size: 55px;
   position: fixed;
@@ -575,6 +597,15 @@ hr.solid {
   font-size: 30px;
   font-weight: 700;
   margin-left: 9rem;
+}
+
+.possible-point-text {
+  text-align: justify;
+  padding: 5px 40px 40px 40px;
+  color: white;
+  font-size: 30px;
+  font-weight: 700;
+  margin-left: 10.5rem;
 }
 
 .popout-robot {
@@ -1055,12 +1086,13 @@ input[type="checkbox"]:focus + .reverse-input-tick {
 }
 
 .transformation-left-side {
-  margin-top: 150px;
+  margin-top: 175px;
   margin-left: 40px;
 }
 
 .transformation-right-side {
   margin-top: 85px;
+  margin-right: 4rem;
 }
 
 .radio-point {
@@ -1143,7 +1175,7 @@ input[type="checkbox"]:focus + .reverse-input-tick {
 }
 
 .question-panel-transformation {
-  margin-right: 195px;
+  margin-right: 83px;
 }
 
 .transformation-input {
@@ -1177,22 +1209,22 @@ input[type="checkbox"]:focus + .reverse-input-tick {
 }
 
 .transformation-position-1 {
-  margin-top: -350px !important;
+  margin-top: -370px !important;
   margin-left: -350px;
 }
 
 .transformation-position-2 {
-  margin-top: -350px !important;
+  margin-top: -370px !important;
   margin-left: 500px;
 }
 
 .transformation-position-3 {
-  margin-top: -60px !important;
+  margin-top: -45px !important;
   margin-left: -460px;
 }
 
 .transformation-position-4 {
-  margin-top: -60px !important;
+  margin-top: -45px !important;
   margin-left: 370px;
 }
 
@@ -1207,7 +1239,7 @@ input[type="checkbox"]:focus + .reverse-input-tick {
   background-color: #CB2E81;
   position: absolute;
   margin-top: 780px;
-  margin-left: 117px;
+  margin-left: 6px;
 }
 
 .mt-play-buttons {
@@ -1231,6 +1263,7 @@ input[type="checkbox"]:focus + .reverse-input-tick {
 .cursor-pointer-bulb {
   position: absolute;
   margin-left: 20px;
+  margin-top: -.5rem !important;
   color: rgb(241, 241, 40);
 }
 
@@ -1239,14 +1272,16 @@ input[type="checkbox"]:focus + .reverse-input-tick {
   color: rgb(109, 109, 20);
 }
 
+.cursor-pointer-bulb:active {
+  color: rgb(58, 58, 9);
+}
+
 .cursor-pointer-bulb-disabled {
   position: absolute;
   margin-left: 20px;
+  margin-top: -.5rem !important;
   color: rgb(241, 241, 40);
-}
-
-.cursor-pointer-bulb-disabled:hover {
-  cursor: default;
+  pointer-events: none;
 }
 
 .transformation .figure-button {
@@ -1524,7 +1559,7 @@ input[type="checkbox"]:focus + .reverse-input-tick {
 
 .export-parallelogram {
   position: absolute;
-  margin-left: 7.4rem;
+  margin-left: .4rem;
 }
 
 .export-parallelogram button {
@@ -1535,4 +1570,69 @@ input[type="checkbox"]:focus + .reverse-input-tick {
 .error-icon {
   position: absolute;
   margin-left: 2rem;
+}
+
+.slider-container-transformation {
+  width: 100%;
+  padding-left: .5rem;
+  padding-right: .5rem !important;
+}
+
+.slider-container-transformation h1 {
+  font-weight: 800;
+  color:#CB2E81;
+  font-size: 2.5rem;
+}
+
+.slider-container-transformation input[type=range]::-webkit-slider-thumb:active {
+  background-color: #962b7c;
+  -webkit-box-shadow: 0 0 10px 7px #962b7bc0;
+  -moz-box-shadow: 0 0 10px 7px #962b7bc0;
+  box-shadow: 0 0 10px 7px #962b7bc0;
+}
+
+
+.slider-container-transformation input[type=range]:disabled::-webkit-slider-thumb {
+  background-color: #c0bdbd;
+}
+
+.slider-container-transformation input[type=range]:disabled::-webkit-slider-thumb:active {
+  background-color: #c0bdbd;
+  -webkit-box-shadow: none;
+  -moz-box-shadow: none;
+  box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d; /* Add cool effects to your sliders! */
+}
+
+.slider-container-transformation input[type=range]:disabled::-webkit-slider-thumb:active {
+  background-color: #c0bdbd;
+  -webkit-box-shadow: none;
+  -moz-box-shadow: none;
+  box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d; /* Add cool effects to your sliders! */
+}
+
+.slider-container-transformation input[type=range]:disabled::-webkit-slider-thumb:hover {
+  background-color: #c0bdbd;
+  cursor: default;
+}
+
+.slider-container-transformation input[type=range]::-webkit-slider-runnable-track {
+  cursor: default;
+}
+
+.slider-container-transformation input[type=range]::-ms-track {
+  cursor: default;
+}
+
+.slider-container-transformation-header-disabled {
+  color: #c0bdbd !important;
+}
+
+.above-inputs-width {
+  width: 27rem;
+  margin-left: 0rem;
+  margin-right: 0rem;
+}
+
+.transformation-parameters-div {
+  margin-top: 4.9rem !important;
 }
